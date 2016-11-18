@@ -1,5 +1,5 @@
 from django.db import models
-from exercises import exercise_constants
+from exercises.exercise_constants import *
 
 # All the data related to Exercises (Exercises, Types, Equipments, Muscles)
 # will be created and handled by Administration Team Only
@@ -11,10 +11,10 @@ class Exercise(models.Model):
     """
     
     name = models.CharField(max_length=50)
-    equipement = models.ForeignKey(Equipment)
+    equipement = models.ForeignKey('exercises.Equipment')
     level = models.IntegerField(choices=Exercise_Level, default=MEDIUM)
     type = models.IntegerField(choices=Exercise_Type, default=BODYWEIGHT)
-    muscles = models.ManyToManyField(Muscle)
+    muscles = models.ManyToManyField('exercises.Muscle')
 
     def __str__(self):
         return self.name    
