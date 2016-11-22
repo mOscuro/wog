@@ -5,7 +5,7 @@ class ExerciseSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Exercise
-        fields = ('name', 'level', 'equipment', 'type', 'muscles')
+        fields = ('name', 'level', 'equipement', 'type', 'muscles')
         
 class EquipmentSerializer(serializers.ModelSerializer):
     

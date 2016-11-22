@@ -2,15 +2,29 @@ from django.db import models
 from exercises.models import Exercise
 
 # Create your models here.
+
 class Workout(models.Model):
    
+    STAFF = 1
+    ONESHOT = 2
+    PRIVATE = 3
+    PUBLIC = 4
+    
+    Workout_Type = (
+        (STAFF, 'Staff'),
+        (ONESHOT, 'One Shot'),
+        (PRIVATE, 'Private Workout'),
+        (PUBLIC, 'Public Workout'),
+    )
+   
     name = models.CharField(max_length=100)
-    is_public = models.BooleanField()
+    type = models.IntegerField(choices=Workout_Type, default=ONESHOT)
     creator = models.ForeignKey('auth.User', related_name='workouts')
     
     def __str__(self):
         return self.name   
     
+
 class Step(models.Model):
     """
     A Step describes the smallest part of a Workout
@@ -18,16 +32,19 @@ class Step(models.Model):
         - 15 pullups
         - 10 bench press @ 15Kg
     """
-    workout = models.ForeignKey(Workout, on_delete=models.CASCADE)
+    workout = models.ForeignKey(Workout, related_name='steps', on_delete=models.CASCADE)
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
     round = models.IntegerField()
     numero = models.IntegerField()
     nb_rep = models.IntegerField()
-    weight = models.FloatField()
+    weight = models.FloatField(default=0)
     
     class Meta:
         unique_together = ('workout', 'numero')
         ordering = ['numero']
+    
+    def __str__(self):
+        return self.workout.name + " - " + str(self.nb_rep) + " " + self.exercise.name   
 
     
 class Session(models.Model):

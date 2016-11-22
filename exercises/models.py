@@ -6,15 +6,14 @@ from exercises.exercise_constants import *
 
 class Exercise(models.Model):
     """
-    An Exercise can be integrated into a Wod_Step of a Workout
-    but can also be executed on its own
+    An Exercise will be integrated into a Wod_Step of a Workout
     """
     
     name = models.CharField(max_length=50)
-    equipement = models.ForeignKey('exercises.Equipment')
+    equipement = models.ForeignKey('exercises.Equipment', blank=True, null=True)
     level = models.IntegerField(choices=Exercise_Level, default=MEDIUM)
     type = models.IntegerField(choices=Exercise_Type, default=BODYWEIGHT)
-    muscles = models.ManyToManyField('exercises.Muscle')
+    muscles = models.ManyToManyField('exercises.Muscle', blank=True)
 
     def __str__(self):
         return self.name    
