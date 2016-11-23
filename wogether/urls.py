@@ -18,6 +18,6 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^', include('workouts.urls')),
-    url(r'^', include('exercises.urls'))    
+    url(r'^api/v1/', include('wogether.urls_api_v1')),
+#    url(r'^', include('workouts.urls')),
 ]
