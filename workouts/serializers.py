@@ -5,6 +5,8 @@ from exercises.serializers import ExerciseSerializer
 
 class WorkoutSerializer(serializers.ModelSerializer):
     
+    creator = serializers.ReadOnlyField(source='creator.username')
+    
     class Meta:
         model = Workout
         fields = ('name', 'type', 'creator')

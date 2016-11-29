@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Login redirection rule
+#LOGIN_REDIRECT_URL = "/api/v1/"
 
 # Application definition
 

@@ -1,6 +1,6 @@
 from django.db import models
 from exercises.models import Exercise
-
+import pdb
 # Create your models here.
 
 class Workout(models.Model):
@@ -24,7 +24,6 @@ class Workout(models.Model):
     def __str__(self):
         return self.name   
     
-
 class Step(models.Model):
     """
     A Step describes the smallest part of a Workout
@@ -35,7 +34,7 @@ class Step(models.Model):
     workout = models.ForeignKey(Workout, related_name='steps', on_delete=models.CASCADE)
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
     round = models.IntegerField()
-    numero = models.IntegerField()
+    numero = models.IntegerField(blank=True, null=True)
     nb_rep = models.IntegerField()
     weight = models.FloatField(default=0)
     
@@ -46,6 +45,13 @@ class Step(models.Model):
     def __str__(self):
         return self.workout.name + " - " + str(self.nb_rep) + " " + self.exercise.name   
 
+    def save(self, *args, **kwargs):
+
+        if not self.pk and not self.numero:
+            nb_step = Step.objects.filter(workout=self.workout).count()
+            self.numero=nb_step+1
+        super(Step, self).save(*args, **kwargs)
+    
     
 class Session(models.Model):
     """

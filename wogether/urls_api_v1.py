@@ -3,6 +3,7 @@ from workouts.views import WorkoutViewSet, StepNestedInWorkoutViewSet
 from django.conf.urls import url, include
 from exercises.views import ExerciseViewSet
 from account.views import AccountViewSet
+from rest_framework.authtoken.views import obtain_auth_token
 
 router = routers.DefaultRouter()
 router.register(r'users', AccountViewSet)
@@ -19,4 +20,5 @@ workouts_router.register(r'steps',
 urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^', include(workouts_router.urls)),
+    url(r'^obtain-auth-token/$', obtain_auth_token),
 ]

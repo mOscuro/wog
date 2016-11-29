@@ -1,12 +1,11 @@
 from rest_framework import viewsets, mixins, permissions
+from rest_framework.generics import get_object_or_404
 
 from workouts.serializers import WorkoutDetailSerializer, StepSerializer,\
     WorkoutListSerializer, WorkoutSerializer
 from workouts.models import Workout, Step
-from rest_framework.generics import get_object_or_404
 
 class StepViewSet(viewsets.ModelViewSet):
-
     queryset = Step.objects.all()
     serializer_class = StepSerializer
     permission_classes = (permissions.IsAuthenticated,)
@@ -15,7 +14,7 @@ class WorkoutViewSet(viewsets.ModelViewSet):
     
     queryset = Workout.objects.all()
     serializer_class = WorkoutListSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     
     def get_serializer_class(self):
         if self.action in ['retrieve', 'destroy']:
@@ -23,6 +22,9 @@ class WorkoutViewSet(viewsets.ModelViewSet):
         elif self.action in ['create', 'update', 'partial_update']:
             return WorkoutSerializer
         return WorkoutListSerializer
+    
+    def perform_create(self, serializer):
+        serializer.save(creator=self.request.user)
     
 class StepNestedInWorkoutViewSet(mixins.RetrieveModelMixin,
                                             mixins.CreateModelMixin,
