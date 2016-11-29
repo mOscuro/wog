@@ -1,4 +1,4 @@
-from rest_framework import viewsets, mixins
+from rest_framework import viewsets, mixins, permissions
 
 from workouts.serializers import WorkoutDetailSerializer, StepSerializer,\
     WorkoutListSerializer, WorkoutSerializer
@@ -9,11 +9,13 @@ class StepViewSet(viewsets.ModelViewSet):
 
     queryset = Step.objects.all()
     serializer_class = StepSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
 class WorkoutViewSet(viewsets.ModelViewSet):
     
     queryset = Workout.objects.all()
     serializer_class = WorkoutListSerializer
+    permission_classes = (permissions.IsAuthenticated,)
     
     def get_serializer_class(self):
         if self.action in ['retrieve', 'destroy']:
