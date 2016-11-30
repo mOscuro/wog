@@ -26,7 +26,7 @@ class StepSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Step
-        fields = ('round', 'numero', 'nb_rep', 'exercise', 'weight')
+        fields = ('id', 'round', 'numero', 'nb_rep', 'exercise', 'weight')
 
 class WorkoutDetailSerializer(serializers.ModelSerializer):
     

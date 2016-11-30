@@ -1,20 +1,24 @@
-from rest_framework import viewsets, mixins, permissions
+from rest_framework import viewsets, permissions
 from rest_framework.generics import get_object_or_404
 
 from workouts.serializers import WorkoutDetailSerializer, StepSerializer,\
     WorkoutListSerializer, WorkoutSerializer
 from workouts.models import Workout, Step
+from workouts.permissions import IsCreatorOrReadOnly, IsWorkoutCreatorOrReadOnly
 
-class StepViewSet(viewsets.ModelViewSet):
-    queryset = Step.objects.all()
-    serializer_class = StepSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-
+#===============================================================================
+# class StepViewSet(viewsets.ModelViewSet):
+#     queryset = Step.objects.all()
+#     serializer_class = StepSerializer
+#     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+#===============================================================================
+    
 class WorkoutViewSet(viewsets.ModelViewSet):
     
     queryset = Workout.objects.all()
     serializer_class = WorkoutListSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
+                      IsCreatorOrReadOnly,)
     
     def get_serializer_class(self):
         if self.action in ['retrieve', 'destroy']:
@@ -26,25 +30,11 @@ class WorkoutViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user)
     
-class StepNestedInWorkoutViewSet(mixins.RetrieveModelMixin,
-                                            mixins.CreateModelMixin,
-                                            mixins.DestroyModelMixin,
-                                            mixins.ListModelMixin,
-                                            mixins.UpdateModelMixin,
-                                            viewsets.GenericViewSet):
+class StepNestedInWorkoutViewSet(viewsets.ModelViewSet):
 
     queryset = Step.objects.all()
     serializer_class = StepSerializer
-
-    #===========================================================================
-    # def get_serializer_class(self):
-    #     if self.action in ['update', 'partial_update']:
-    #         return MemberDocumentUpdateSerializer
-    #     elif self.action == 'create':
-    #         return MemberDocumentCreateSerializer
-    #     else:  # ['retrieve', 'list']
-    #         return MemberDocumentSerializer
-    #===========================================================================
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsWorkoutCreatorOrReadOnly,)
 
     def get_workout(self, workout_pk=None):
 
@@ -52,5 +42,11 @@ class StepNestedInWorkoutViewSet(mixins.RetrieveModelMixin,
         return workout
 
     def get_queryset(self):
-        return Step.objects.filter(workout=self.kwargs['workout_pk'])
+        
+        queryset = Step.objects.filter(workout=self.kwargs['workout_pk'])
+        
+        numero = self.request.query_params.get('numero', None)
+        if numero is not None:
+            queryset = queryset.filter(numero=numero)        
+        return queryset
     

@@ -1,29 +1,42 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
+from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
+from django.contrib.auth.models import PermissionsMixin
 
 class AccountManager(BaseUserManager):
-    def create_user(self, username, email, password=None, **kwargs):
+    use_in_migrations = True
+
+    def _create_user(self, username, email, password=None, **extra_fields):
+        """
+        Creates and saves a User with the given email and password.
+        """
         if not email:
-            raise ValueError('authentication must have a valid email address.')
+            raise ValueError('The given email must be set')
+        email = self.normalize_email(email)
+        user = self.model(username=username, email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
-        account = self.model(
-            email=self.normalize_email(email)
-        )
+    def create_user(self, username, email, password, **extra_fields):
+        extra_fields.setdefault('is_staff', False)
+        extra_fields.setdefault('is_superuser', False)
+        return self._create_user(username, email, password, **extra_fields)
 
-        account.set_password(password)
-        account.save()
+    def create_superuser(self, username, email, password, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
 
-        return account
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
 
-    def create_superuser(self, username, email, password, **kwargs):
-        account = self.create_user(email, password, **kwargs)
 
-        account.is_admin = True
-        account.save()
+        return self._create_user(username, email, password, **extra_fields)
 
-        return account
-
-class Account(AbstractBaseUser):
+class AbstractAccount(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=70,unique=True) 
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=70, blank=True)
@@ -31,15 +44,47 @@ class Account(AbstractBaseUser):
     is_admin = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(null=True)
-    is_active = models.BooleanField(default=False)
+    is_staff = models.BooleanField(
+        _('staff status'),
+        default=False,
+        help_text=_('Designates whether the user can log into this admin site.'),
+    )
+    is_active = models.BooleanField(
+        _('active'),
+        default=True,
+        help_text=_(
+            'Designates whether this user should be treated as active. '
+            'Unselect this instead of deleting accounts.'
+        ),
+    )
+    date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
 
     objects = AccountManager()
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
     
+    class Meta:
+        verbose_name = _('user')
+        verbose_name_plural = _('users')
+        abstract = True
+    
     def __unicode__(self):
         return self.email
 
     def get_full_name(self):
         return ' '.join([self.prenom, self.nom])
+    
+    def get_short_name(self):
+        '''
+        Returns the short name for the user.
+        '''
+        return self.first_name
+    
+class User(AbstractAccount):
+    """
+    Users within the Django authentication system are represented by this
+    model.
+
+    password, email, first_name and last_name are required.
+    """

@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     
-    'account',
+    'accounts',
     'workouts',
     'exercises',
 ]
@@ -113,6 +113,8 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication'   
     )
 }
+
+AUTH_USER_MODEL = 'accounts.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/

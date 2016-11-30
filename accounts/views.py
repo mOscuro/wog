@@ -1,10 +1,10 @@
 from rest_framework import viewsets, response, permissions
-from account.serializers import AccountSerializer
-from account.models import Account
+from accounts.serializers import AccountSerializer
+from accounts.models import User
 # Create your views here.
 
 class AccountViewSet(viewsets.ModelViewSet):
-    queryset = Account.objects.all()
+    queryset = User.objects.all()
     serializer_class = AccountSerializer
     permission_classes = (permissions.IsAuthenticated,)
 

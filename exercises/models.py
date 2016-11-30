@@ -6,8 +6,9 @@ from exercises.exercise_constants import Exercise_Level, Exercise_Type, MEDIUM, 
 
 class Equipment(models.Model):
     """
-    Identifying wich equipment is required is used to 
-    Barbell, Dumbell, Bench, Pullup Bar...
+    - Identifying wich equipment is required is used to 
+    - Barbell, Dumbell, Bench, Pullup Bar...
+    - An Muscle can only be created by an administrator
     """
     name = models.CharField(max_length=50)
 
@@ -16,8 +17,9 @@ class Equipment(models.Model):
 
 class Muscle(models.Model):
     """
-    Muscles working during exercise
-    Biceps, Quads, Abs
+    - Muscles working during exercise
+    - Biceps, Quads, Abs
+    - A Muscle can only be created by an administrator
     """
     name = models.CharField(max_length=50)
     
@@ -26,7 +28,8 @@ class Muscle(models.Model):
 
 class Exercise(models.Model):
     """
-    An Exercise will be integrated into a Wod_Step of a Workout
+    - An Exercise will be integrated into a Wod_Step of a Workout
+    - An Exercise can only be created by an administrator
     """
     
     name = models.CharField(max_length=50)
