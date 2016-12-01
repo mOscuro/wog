@@ -8,19 +8,29 @@
 - installer PIP : execute file downloaded at https://bootstrap.pypa.io/get-pip.py (double clic)
 
 - install virtualenv : 
-`pip install virtualenvwrapper-win`
+```
+pip install virtualenvwrapper-win
+```
 
 - Clone the repository :
-`git clone https://github.com/mOscuro/wog_api.git`
+```
+git clone https://github.com/mOscuro/wog_api.git
+```
 
 - Create a virtual environement folder:
-`virtualenv env`
+```
+virtualenv env
+```
 
 - Activate your virtual environement :
-`env\Scripts\activate`
+```
+env\Scripts\activate
+```
 
 - Install required packages :
-`pip install -r requirements.txt`
+```
+pip install -r requirements.txt
+```
 
 - Make migrations and fill the database with some data :
 ```
@@ -30,6 +40,8 @@ python manage.py create_data
 ```
 
 - Run the server :
-`python manage.py runserver`
+```
+python manage.py runserver
+```
 
 Get to work.
