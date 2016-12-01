@@ -14,6 +14,7 @@ class WorkoutSerializer(serializers.ModelSerializer):
     def get_type(self,obj):
         return obj.get_type_display()
 
+
 class WorkoutListSerializer(serializers.HyperlinkedModelSerializer):
     
     class Meta:

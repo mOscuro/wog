@@ -1,20 +1,9 @@
 from django.db import models
 from wogether.settings import AUTH_USER_MODEL
 from exercises.models import Exercise
+from workouts.constants import Workout_Type, ONESHOT
 
 class Workout(models.Model):
-   
-    STAFF = 1
-    ONESHOT = 2
-    PRIVATE = 3
-    PUBLIC = 4
-    
-    Workout_Type = (
-        (STAFF, 'Staff'),
-        (ONESHOT, 'One Shot'),
-        (PRIVATE, 'Private Workout'),
-        (PUBLIC, 'Public Workout'),
-    )
    
     name = models.CharField(max_length=100)
     type = models.IntegerField(choices=Workout_Type, default=ONESHOT)

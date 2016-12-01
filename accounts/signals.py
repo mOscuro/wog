@@ -1,8 +1,7 @@
-'''
-Created on 28 nov. 2016
-
-@author: Matthieu
-'''
+#===============================================================================
+# Created on 28 nov. 2016
+# @author: Matthieu
+#===============================================================================
 
 from django.db.models.signals import post_save
 from wogether.settings import AUTH_USER_MODEL

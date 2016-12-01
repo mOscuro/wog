@@ -1,8 +1,8 @@
-'''
-Created on 28 nov. 2016
+#===============================================================================
+# Created on 28 nov. 2016
+# @author: Matthieu
+#===============================================================================
 
-@author: Matthieu
-'''
 from rest_framework import serializers
 
 #from wogether.settings import AUTH_USER_MODEL

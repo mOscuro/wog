@@ -1,8 +1,8 @@
-'''
-Created on 30 nov. 2016
+#===============================================================================
+# Created on 30 nov. 2016
+# @author: Matthieu
+#===============================================================================
 
-@author: Matthieu
-'''
 from django.core.management.base import BaseCommand
 from accounts.models import User
 from workouts.models import Workout, Step

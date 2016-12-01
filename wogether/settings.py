@@ -41,10 +41,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'crispy_forms', # Created HTML filters in the browsable API and Admin
     
     'accounts',
     'workouts',
     'exercises',
+    
+    'rest_framework_docs',
 ]
 
 MIDDLEWARE = [
@@ -111,7 +114,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication'   
-    )
+    ),
 }
 
 AUTH_USER_MODEL = 'accounts.User'
