@@ -1,6 +1,6 @@
-********************************
-# REQUIREMENTS FOR REST API
-********************************
+***************************************
+# REQUIREMENTS FOR REST API DEVELOPPERS
+***************************************
 - install Python (download a setup file)
 	+ directory named Python à la racine du C:
 - installer GIT (download a setup file)
@@ -9,16 +9,27 @@
 
 - install virtualenv : 
 `pip install virtualenvwrapper-win`
-- install Django : 
-`pip install django`
-- install Django Rest Framework : 
-`pip install djangorestframework`
-- install Django Rest Framework Nested Routers: 
-`pip install drf-nested-routers`
 
-- Instancier le projet :
+- Clone the repository :
+`git clone https://github.com/mOscuro/wog_api.git`
+
+- Create a virtual environement folder:
+`virtualenv env`
+
+- Activate your virtual environement :
+`env\Scripts\activate`
+
+- Install required packages :
+`pip install -r requirements.txt`
+
+- Make migrations and fill the database with some data :
 ```
-cd c:\WOG\
-django-admin.py startproject wog_api
-cd wog_api
+python manage.py makemigrations
+python manage.py migrate
+python manage.py create_data
 ```
+
+- Run the server :
+`python manage.py runserver`
+
+Get to work.
