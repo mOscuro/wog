@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Login redirection rule
+#LOGIN_REDIRECT_URL = "/api/v1/"
 
 # Application definition
 
@@ -39,10 +41,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'crispy_forms', # Created HTML filters in the browsable API and Admin
     
-    'account',
+    'accounts',
     'workouts',
     'exercises',
+    
+    'rest_framework_docs',
 ]
 
 MIDDLEWARE = [
@@ -109,8 +114,10 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication'   
-    )
+    ),
 }
+
+AUTH_USER_MODEL = 'accounts.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/

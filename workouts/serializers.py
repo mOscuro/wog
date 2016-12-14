@@ -5,12 +5,15 @@ from exercises.serializers import ExerciseSerializer
 
 class WorkoutSerializer(serializers.ModelSerializer):
     
+    creator = serializers.ReadOnlyField(source='creator.username')
+    
     class Meta:
         model = Workout
         fields = ('name', 'type', 'creator')
 
     def get_type(self,obj):
         return obj.get_type_display()
+
 
 class WorkoutListSerializer(serializers.HyperlinkedModelSerializer):
     
@@ -24,7 +27,7 @@ class StepSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Step
-        fields = ('round', 'numero', 'nb_rep', 'exercise', 'weight')
+        fields = ('id', 'round', 'numero', 'nb_rep', 'exercise', 'weight')
 
 class WorkoutDetailSerializer(serializers.ModelSerializer):
     
