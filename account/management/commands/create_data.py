@@ -4,10 +4,12 @@
 #===============================================================================
 
 from django.core.management.base import BaseCommand
+
 from account.models import User
-from workout.models import Workout, Step
-from exercise.models import Exercise
 from exercise.exercise_constants import AMATEUR, MEDIUM, BODYWEIGHT
+from exercise.models import Exercise
+from workout.models import Workout, Step, Round
+
 
 class Command(BaseCommand):
     
@@ -75,40 +77,47 @@ class Command(BaseCommand):
         admin_workout1 = Workout.objects.create(name="Aphrodite", type=STAFF, creator=admin_user)
         cpt_rep = 50
         for cpt_round in range(1, 5):
-            Step.objects.create(workout=admin_workout1, exercise=burpees, round=cpt_round, nb_rep=cpt_rep)
-            Step.objects.create(workout=admin_workout1, exercise=air_squats, round=cpt_round, nb_rep=cpt_rep)
-            Step.objects.create(workout=admin_workout1, exercise=situps, round=cpt_round, nb_rep=cpt_rep)
+            admin_workout1_rounds = Round.objects.create(workout=admin_workout1, nb_repeat=1)
+            Step.objects.create(round=admin_workout1_rounds, exercise=burpees, nb_rep=cpt_rep)
+            Step.objects.create(round=admin_workout1_rounds, exercise=air_squats, nb_rep=cpt_rep)
+            Step.objects.create(round=admin_workout1_rounds, exercise=situps, nb_rep=cpt_rep)
             cpt_rep -= 10
         
         # Metis Workout pattern ============================================================
         admin_workout2 = Workout.objects.create(name="Metis", type=STAFF, creator=admin_user)
         # Metis - Round 1
-        Step.objects.create(workout=admin_workout2, exercise=burpees, round=1, nb_rep=10)
-        Step.objects.create(workout=admin_workout2, exercise=climbers, round=1, nb_rep=10)
-        Step.objects.create(workout=admin_workout2, exercise=jumps, round=1, nb_rep=10)
+        admin_workout2_round1 = Round.objects.create(workout=admin_workout2, nb_repeat=1)
+        Step.objects.create(round=admin_workout2_round1, exercise=burpees, nb_rep=10)
+        Step.objects.create(round=admin_workout2_round1, exercise=climbers, nb_rep=10)
+        Step.objects.create(round=admin_workout2_round1, exercise=jumps, nb_rep=10)
         # Metis - Round 2
-        Step.objects.create(workout=admin_workout2, exercise=burpees, round=1, nb_rep=25)
-        Step.objects.create(workout=admin_workout2, exercise=climbers, round=1, nb_rep=25)
-        Step.objects.create(workout=admin_workout2, exercise=jumps, round=1, nb_rep=25)
+        admin_workout2_round2 = Round.objects.create(workout=admin_workout2, nb_repeat=1)
+        Step.objects.create(round=admin_workout2_round2, exercise=burpees, nb_rep=25)
+        Step.objects.create(round=admin_workout2_round2, exercise=climbers, nb_rep=25)
+        Step.objects.create(round=admin_workout2_round2, exercise=jumps, nb_rep=25)
         # Metis - Round 3
-        Step.objects.create(workout=admin_workout2, exercise=burpees, round=1, nb_rep=10)
-        Step.objects.create(workout=admin_workout2, exercise=climbers, round=1, nb_rep=10)
-        Step.objects.create(workout=admin_workout2, exercise=jumps, round=1, nb_rep=10)
+        admin_workout2_round3 = Round.objects.create(workout=admin_workout2, nb_repeat=1)
+        Step.objects.create(round=admin_workout2_round3, exercise=burpees, nb_rep=10)
+        Step.objects.create(round=admin_workout2_round3, exercise=climbers, nb_rep=10)
+        Step.objects.create(round=admin_workout2_round3, exercise=jumps, nb_rep=10)
 
         # Nyx Workout pattern =============================================================
         admin_workout3 = Workout.objects.create(name="Nyx", type=STAFF, creator=admin_user)
         # Nyx - Round 1
-        Step.objects.create(workout=admin_workout3, exercise=situps, round=1, nb_rep=10)
-        Step.objects.create(workout=admin_workout3, exercise=leg_levers, round=1, nb_rep=10)
-        Step.objects.create(workout=admin_workout3, exercise=standups, round=1, nb_rep=10)
+        admin_workout3_round1 = Round.objects.create(workout=admin_workout3, nb_repeat=1)
+        Step.objects.create(round=admin_workout3_round1, exercise=situps, nb_rep=10)
+        Step.objects.create(round=admin_workout3_round1, exercise=leg_levers, nb_rep=10)
+        Step.objects.create(round=admin_workout3_round1, exercise=standups, nb_rep=10)
         # Nyx - Round 2
-        Step.objects.create(workout=admin_workout3, exercise=situps, round=1, nb_rep=25)
-        Step.objects.create(workout=admin_workout3, exercise=leg_levers, round=1, nb_rep=25)
-        Step.objects.create(workout=admin_workout3, exercise=standups, round=1, nb_rep=25)
+        admin_workout3_round2 = Round.objects.create(workout=admin_workout3, nb_repeat=1)
+        Step.objects.create(round=admin_workout3_round2, exercise=situps, nb_rep=25)
+        Step.objects.create(round=admin_workout3_round2, exercise=leg_levers, nb_rep=25)
+        Step.objects.create(round=admin_workout3_round2, exercise=standups, nb_rep=25)
         # Nyx - Round 3
-        Step.objects.create(workout=admin_workout3, exercise=situps, round=1, nb_rep=10)
-        Step.objects.create(workout=admin_workout3, exercise=leg_levers, round=1, nb_rep=10)
-        Step.objects.create(workout=admin_workout3, exercise=standups, round=1, nb_rep=10)
+        admin_workout3_round3 = Round.objects.create(workout=admin_workout3, nb_repeat=1)
+        Step.objects.create(round=admin_workout3_round3, exercise=situps, nb_rep=10)
+        Step.objects.create(round=admin_workout3_round3, exercise=leg_levers, nb_rep=10)
+        Step.objects.create(round=admin_workout3_round3, exercise=standups, nb_rep=10)
                
         #=======================================================================
         # USER 1 WORKOUTS
@@ -117,35 +126,37 @@ class Command(BaseCommand):
         user1 = User.objects.get(email="user1@wogether.com")
         user1_workout1 = Workout.objects.create(name="Private Custom Workout 1", type=PRIVATE, creator=user1)
         # 5 Rounds pattern
-        for cpt_round in range(1, 5):
-            Step.objects.create(workout=user1_workout1, exercise=pullups, round=cpt_round, nb_rep=10)
-            Step.objects.create(workout=user1_workout1, exercise=pushups, round=cpt_round, nb_rep=20)
-            Step.objects.create(workout=user1_workout1, exercise=situps, round=cpt_round, nb_rep=30)
-            Step.objects.create(workout=user1_workout1, exercise=lunges, round=cpt_round, nb_rep=40)
+        user1_workout1_5round = Round.objects.create(workout=user1_workout1, nb_repeat=5)
+        Step.objects.create(round=user1_workout1_5round, exercise=pullups, nb_rep=10)
+        Step.objects.create(round=user1_workout1_5round, exercise=pushups, nb_rep=20)
+        Step.objects.create(round=user1_workout1_5round, exercise=situps, nb_rep=30)
+        Step.objects.create(round=user1_workout1_5round, exercise=lunges, nb_rep=40)
             
         user1_workout2 = Workout.objects.create(name="Public Custom Workout 1", type=PUBLIC, creator=user1)
         # 4 Rounds pattern
-        for cpt_round in range(1, 4):
-            Step.objects.create(workout=user1_workout2, exercise=burpees, round=cpt_round, nb_rep=20)
-            Step.objects.create(workout=user1_workout2, exercise=pushups, round=cpt_round, nb_rep=20)
-            Step.objects.create(workout=user1_workout2, exercise=situps, round=cpt_round, nb_rep=20)
-            Step.objects.create(workout=user1_workout2, exercise=air_squats, round=cpt_round, nb_rep=20)
+        user1_workout2_4round = Round.objects.create(workout=user1_workout2, nb_repeat=4)
+        Step.objects.create(round=user1_workout2_4round, exercise=burpees, nb_rep=20)
+        Step.objects.create(round=user1_workout2_4round, exercise=pushups, nb_rep=20)
+        Step.objects.create(round=user1_workout2_4round, exercise=situps, nb_rep=20)
+        Step.objects.create(round=user1_workout2_4round, exercise=air_squats, nb_rep=20)
  
         #=======================================================================
         # USER 2 WORKOUTS
         #=======================================================================
         user2 = User.objects.get(email="user2@wogether.com")
-        # 10 minutes AMRAP pattern            
+        # 10 minutes AMRAP pattern
         user2_workout1 = Workout.objects.create(name="Private Custom Workout 2", type=PRIVATE, creator=user2, amrap=10)
-        Step.objects.create(workout=user2_workout1, exercise=lunges, nb_rep=15)
-        Step.objects.create(workout=user2_workout1, exercise=pushups, nb_rep=10)
-        Step.objects.create(workout=user2_workout1, exercise=lunges, nb_rep=15)
-        Step.objects.create(workout=user2_workout1, exercise=situps, nb_rep=20)
+        user2_workout1_default_round = Round.objects.create(workout=user2_workout1, default=True)
+        Step.objects.create(round=user2_workout1_default_round, exercise=lunges, nb_rep=15)
+        Step.objects.create(round=user2_workout1_default_round, exercise=pushups, nb_rep=10)
+        Step.objects.create(round=user2_workout1_default_round, exercise=lunges, nb_rep=15)
+        Step.objects.create(round=user2_workout1_default_round, exercise=situps, nb_rep=20)
         
         # 20 minutes AMRAP pattern            
         user2_workout2 = Workout.objects.create(name="Public Custom Workout 2", type=PUBLIC, creator=user2, amrap=20)
-        Step.objects.create(workout=user2_workout2, exercise=burpees, nb_rep=15)
-        Step.objects.create(workout=user2_workout2, exercise=situps, nb_rep=15)
-        Step.objects.create(workout=user2_workout2, exercise=air_squats, nb_rep=15)
+        user2_workout2_default_round = Round.objects.create(workout=user2_workout2, default=True)
+        Step.objects.create(round=user2_workout2_default_round, exercise=burpees, nb_rep=15)
+        Step.objects.create(round=user2_workout2_default_round, exercise=situps, nb_rep=15)
+        Step.objects.create(round=user2_workout2_default_round, exercise=air_squats, nb_rep=15)
 
         print("Done.")

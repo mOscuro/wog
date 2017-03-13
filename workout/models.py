@@ -32,6 +32,7 @@ class Round(models.Model):
     - A Round is a container for steps.
     It can be repeated multiple times during the execution of the Workout.    
     """
+    default = models.BooleanField(default=False)
     nb_repeat = models.IntegerField(default=1)
     workout = models.ForeignKey(Workout, related_name='rounds', on_delete=models.CASCADE)
     
@@ -52,19 +53,12 @@ class Step(models.Model):
     rest_time = models.IntegerField(default=0)
     
     class Meta:
-        unique_together = ('workout', 'numero')
+        #unique_together = ('workout', 'numero')
         ordering = ['numero']
     
     def __str__(self):
-        return self.workout.name + " - " + str(self.nb_rep) + " " + self.exercise.name   
+        return self.round.workout.name + " - " + str(self.nb_rep) + " " + self.exercise.name   
 
-    def save(self, *args, **kwargs):
-
-        if not self.pk and not self.numero:
-            nb_step = Step.objects.filter(workout=self.workout).count()
-            self.numero=nb_step+1
-        super(Step, self).save(*args, **kwargs)
-    
     
 class Session(models.Model):
     """
