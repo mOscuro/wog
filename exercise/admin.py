@@ -1,5 +1,5 @@
 from django.contrib import admin
-from exercises.models import Exercise, Equipment, Muscle
+from exercise.models import Exercise, Equipment, Muscle
 
 # Register your models here.
 admin.site.register(Exercise)

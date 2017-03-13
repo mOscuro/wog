@@ -1,12 +1,12 @@
 #===============================================================================
 # from django.conf.urls import url, include
-# from exercises import views
+# from exercise import views
 # from rest_framework.routers import DefaultRouter
 #===============================================================================
 
 # Create a router and register our viewsets with it.
 #router = DefaultRouter()
-#router.register(r'exercises', views.ExerciseViewSet)
+#router.register(r'exercise', views.ExerciseViewSet)
 #router.register(r'users', views.UserViewSet)
 
 # The API URLs are now determined automatically by the router.

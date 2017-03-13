@@ -3,22 +3,22 @@ from rest_framework.generics import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
 
-from workouts.serializers import WorkoutDetailSerializer, StepSerializer,\
+from workout.serializers import WorkoutDetailSerializer, StepSerializer,\
     WorkoutListSerializer, WorkoutSerializer
-from workouts.models import Workout, Step
-from workouts.constants import STAFF, PUBLIC
-from workouts.permissions import IsCreatorOrReadOnly, IsWorkoutCreatorOrReadOnly
+from workout.models import Workout, Step
+from workout.constants import STAFF, PUBLIC
+from workout.permissions import IsCreatorOrReadOnly, IsWorkoutCreatorOrReadOnly
 
 class WorkoutViewSet(viewsets.ModelViewSet):
     """
-    - API view to get the list of the workouts
-        -- ADMIN user get to see all the workouts
-        -- Standard user get to see his workouts, staff workouts, and public workouts created by other users
+    - API view to get the list of the workout
+        -- ADMIN user get to see all the workout
+        -- Standard user get to see his workout, staff workout, and public workout created by other users
     - Permissions:
         -- Must be authenticated to see any workout
         -- Must be the creator to update or delete a workout
     - Query parameters :
-        -- perso : if equals 1, get only workouts with logged in user as the creator 
+        -- perso : if equals 1, get only workout with logged in user as the creator 
     """
     queryset = Workout.objects.all()
     serializer_class = WorkoutListSerializer
@@ -30,11 +30,11 @@ class WorkoutViewSet(viewsets.ModelViewSet):
         queryset = Workout.objects.all()
         user = self.request.user
         
-        # Only ADMIN users can see all the workouts
+        # Only ADMIN users can see all the workout
         if not user.is_staff:
             queryset = queryset.filter(Q(creator=user.id) | Q(type=STAFF) | Q(type=PUBLIC))
       
-        # Query parameter to get only logged user workouts
+        # Query parameter to get only logged user workout
         perso = self.request.query_params.get('perso', None)
         if perso is not None:
             queryset =  queryset.filter(creator=user)    

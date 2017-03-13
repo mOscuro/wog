@@ -1,8 +1,8 @@
 from rest_framework import viewsets, permissions
 
-from exercises.serializers import ExerciseSerializer
-from exercises.models import Exercise
-from exercises.permissions import IsAdminOrReadOnly
+from exercise.serializers import ExerciseSerializer
+from exercise.models import Exercise
+from exercise.permissions import IsAdminOrReadOnly
 
 # Create your views here.
 class ExerciseViewSet(viewsets.ModelViewSet):

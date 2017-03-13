@@ -2,7 +2,7 @@ from django.apps import AppConfig
 
 
 class AccountConfig(AppConfig):
-    name = 'accounts'
+    name = 'account'
 
     def ready(self):
-        from . import signals
+       accountfrom . import signals

@@ -1,6 +1,6 @@
 #===============================================================================
 # from django.conf.urls import url, include
-# from workouts import views
+# from workout import views
 # from rest_framework.routers import DefaultRouter
 #===============================================================================
 
@@ -10,7 +10,7 @@
 #router.register(r'users', views.UserViewSet)
 
 #router_test = DefaultRouter()
-#router.register(r'workouts', views.WorkoutViewSet)
+#router.register(r'workout', views.WorkoutViewSet)
 
 
 # The API URLs are now determined automatically by the router.

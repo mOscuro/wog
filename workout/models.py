@@ -1,18 +1,39 @@
 from django.db import models
 from wogether.settings import AUTH_USER_MODEL
-from exercises.models import Exercise
-from workouts.constants import Workout_Type, ONESHOT
+from exercise.models import Exercise
+from workout.constants import Workout_Type, ONESHOT
 
 class Workout(models.Model):
    
     name = models.CharField(max_length=100)
     type = models.IntegerField(choices=Workout_Type, default=ONESHOT)
-    creator = models.ForeignKey(AUTH_USER_MODEL, related_name='workouts')
+    creator = models.ForeignKey(AUTH_USER_MODEL, related_name='workout')
     amrap = models.IntegerField(default=0)
     emom = models.IntegerField(default=0)
+    description = models.TextField(blank=True)
     
     def __str__(self):
-        return self.name   
+        return self.name
+    
+    def is_amrap(self):
+        """
+        * Workout type : As Many Reps As Possible in the given time
+        """
+        return self.amrap > 0
+
+    def is_emom(self):
+        """
+        * Workout type : Every minute on the minute for a specified number of minutes
+        """
+        return self.emom > 0
+
+class Round(models.Model):
+    """
+    - A Round is a container for steps.
+    It can be repeated multiple times during the execution of the Workout.    
+    """
+    nb_repeat = models.IntegerField(default=1)
+    workout = models.ForeignKey(Workout, related_name='rounds', on_delete=models.CASCADE)
     
 class Step(models.Model):
     """
@@ -21,11 +42,12 @@ class Step(models.Model):
         -- 15 pullups
         -- 10 bench press @ 15Kg
     """
-    workout = models.ForeignKey(Workout, related_name='steps', on_delete=models.CASCADE)
+    round = models.ForeignKey(Round, related_name='steps', on_delete=models.CASCADE)
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
     round = models.IntegerField(default=1)
     numero = models.IntegerField(blank=True, null=True)
     nb_rep = models.IntegerField()
+    distance = models.IntegerField(default=0)
     weight = models.FloatField(default=0)
     rest_time = models.IntegerField(default=0)
     

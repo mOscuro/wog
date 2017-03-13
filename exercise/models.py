@@ -1,5 +1,5 @@
 from django.db import models
-from exercises.exercise_constants import Exercise_Level, Exercise_Type, MEDIUM, BODYWEIGHT
+from exercise.exercise_constants import Exercise_Level, Exercise_Type, MEDIUM, BODYWEIGHT
 
 # All the data related to Exercises (Exercises, Types, Equipments, Muscles)
 # will be created and handled by Administration Team Only

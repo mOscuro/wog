@@ -1,6 +1,6 @@
 from rest_framework import viewsets, response, permissions
-from accounts.serializers import AccountSerializer
-from accounts.models import User
+from account.serializers import AccountSerializer
+from account.models import User
 # Create your views here.
 
 class AccountViewSet(viewsets.ModelViewSet):

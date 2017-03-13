@@ -6,7 +6,7 @@
 from rest_framework import serializers
 
 #from wogether.settings import AUTH_USER_MODEL
-from accounts.models import User
+from account.models import User
 
 class AccountSerializer(serializers.ModelSerializer):
     

@@ -43,9 +43,9 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'crispy_forms', # Created HTML filters in the browsable API and Admin
     
-    'accounts',
-    'workouts',
-    'exercises',
+    'account',
+    'workout',
+    'exercise',
     
     'rest_framework_docs',
 ]
@@ -117,7 +117,7 @@ REST_FRAMEWORK = {
     ),
 }
 
-AUTH_USER_MODEL = 'accounts.User'
+AUTH_USER_MODEL = 'account.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/

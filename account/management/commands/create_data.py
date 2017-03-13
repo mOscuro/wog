@@ -4,10 +4,10 @@
 #===============================================================================
 
 from django.core.management.base import BaseCommand
-from accounts.models import User
-from workouts.models import Workout, Step
-from exercises.models import Exercise
-from exercises.exercise_constants import AMATEUR, MEDIUM, BODYWEIGHT
+from account.models import User
+from workout.models import Workout, Step
+from exercise.models import Exercise
+from exercise.exercise_constants import AMATEUR, MEDIUM, BODYWEIGHT
 
 class Command(BaseCommand):
     
@@ -54,7 +54,7 @@ class Command(BaseCommand):
         #=======================================================================
         # CREATE SOME EXERCISES
         #=======================================================================
-        print("Creating some exercises...")
+        print("Creating some exercise...")
         burpees = Exercise.objects.create(name="Burpees", level=AMATEUR, type=BODYWEIGHT)
         air_squats = Exercise.objects.create(name="Air Squats", level=AMATEUR, type=BODYWEIGHT)
         lunges = Exercise.objects.create(name="Lunges", level=AMATEUR, type=BODYWEIGHT)
@@ -71,7 +71,7 @@ class Command(BaseCommand):
         #=======================================================================
         
         # Aphrodite Workout pattern
-        print("Creating some admin workouts...")
+        print("Creating some admin workout...")
         admin_workout1 = Workout.objects.create(name="Aphrodite", type=STAFF, creator=admin_user)
         cpt_rep = 50
         for cpt_round in range(1, 5):
@@ -113,7 +113,7 @@ class Command(BaseCommand):
         #=======================================================================
         # USER 1 WORKOUTS
         #=======================================================================
-        print("Creating users workouts...")
+        print("Creating users workout...")
         user1 = User.objects.get(email="user1@wogether.com")
         user1_workout1 = Workout.objects.create(name="Private Custom Workout 1", type=PRIVATE, creator=user1)
         # 5 Rounds pattern
