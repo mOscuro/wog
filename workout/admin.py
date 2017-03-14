@@ -15,5 +15,5 @@ class StepAdmin(admin.ModelAdmin):
 #    admin_document_creator_link.allow_tags = True
 #    admin_document_creator_link.short_description = "Creator"
 
-    list_display = ('round', 'numero', 'exercise', 'nb_rep')
+    list_display = ('round', 'exercise', 'nb_rep')
     #list_filter = ('workout',)

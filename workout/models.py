@@ -45,19 +45,16 @@ class Step(models.Model):
     """
     round = models.ForeignKey(Round, related_name='steps', on_delete=models.CASCADE)
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
-    round = models.IntegerField(default=1)
-    numero = models.IntegerField(blank=True, null=True)
     nb_rep = models.IntegerField()
     distance = models.IntegerField(default=0)
     weight = models.FloatField(default=0)
     rest_time = models.IntegerField(default=0)
     
-    class Meta:
+    #class Meta:
         #unique_together = ('workout', 'numero')
-        ordering = ['numero']
     
     def __str__(self):
-        return self.round.workout.name + " - " + str(self.nb_rep) + " " + self.exercise.name   
+        return str(self.nb_rep) + " " + self.exercise.name   
 
     
 class Session(models.Model):

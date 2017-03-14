@@ -68,11 +68,5 @@ class StepNestedInWorkoutViewSet(viewsets.ModelViewSet):
         return workout
 
     def get_queryset(self):
-        
-        queryset = Step.objects.filter(workout=self.kwargs['workout_pk'])
-        
-        numero = self.request.query_params.get('numero', None)
-        if numero:
-            queryset = queryset.filter(numero=numero)        
-        return queryset
+        return Step.objects.filter(workout=self.kwargs['workout_pk'])
     
