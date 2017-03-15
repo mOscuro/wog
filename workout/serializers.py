@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
 from exercise.serializers import ExerciseSerializer
-from workout.models import Workout, Step, Round
+from round.models import Round, Step
+from workout.models import Workout, WorkoutItemNode, WorkoutTree
 
 
 class WorkoutSerializer(serializers.ModelSerializer):
@@ -43,22 +44,44 @@ class RoundSerializer(serializers.ModelSerializer):
     """
     A round is a container for steps.
     """
-    steps = StepSerializer(many=True)
+    round_steps = StepSerializer(many=True)
     class Meta:
         model = Round 
-        fields = ('nb_repeat', 'default', 'steps')
+        fields = ('nb_repeat', 'round_steps')
 
+class WorkoutTreeSerializer(serializers.ModelSerializer):
+    round = serializers.CharField(source='workoutitemnode.round')
+    step = serializers.CharField(source='workoutitemnode.step')
+
+#     def get_item(self, obj):
+#         return 'item'
+#         if obj.round is not None:
+#             return obj.round
+#         elif obj.step is not None:
+#             return obj.step
+    
+    class Meta:
+        model = WorkoutTree
+        fields = ('round', 'step',)
 
 class WorkoutDetailSerializer(serializers.ModelSerializer):
     """
     Used to get detailed vision of a workout > rounds > steps > exercises
     """
-    rounds = RoundSerializer(many=True)
+    #id = serializers.IntegerField(source='gantttreeitem.task.id')
+    #rounds = RoundSerializer(many=True)
+    items = serializers.SerializerMethodField()
     type = serializers.SerializerMethodField()
-        
-    class Meta:
-        model = Workout
-        fields = ('name', 'type', 'creator', 'rounds')
-
+    
+    def get_items(self, obj):
+        queryset = WorkoutTree.objects.filter(workoutitemnode__round__workout=obj, workoutitemnode__step__workout=obj)
+        serializer = WorkoutTreeSerializer(queryset, many=True)
+        return serializer.data
+    
     def get_type(self,obj):
         return obj.get_type_display()
+        
+    class Meta:
+        model = WorkoutTree
+        fields = ('__all__')
+

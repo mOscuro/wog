@@ -41,10 +41,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'treebeard',
     'crispy_forms', # Created HTML filters in the browsable API and Admin
     
     'account',
     'workout',
+    'round',
     'exercise',
     
     'rest_framework_docs',

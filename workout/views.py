@@ -5,7 +5,8 @@ from django.db.models import Q
 
 from workout.serializers import WorkoutDetailSerializer, StepSerializer,\
     WorkoutListSerializer, WorkoutSerializer
-from workout.models import Workout, Step
+from workout.models import Workout
+from round.models import Step
 from workout.constants import STAFF, PUBLIC
 from workout.permissions import IsCreatorOrReadOnly, IsWorkoutCreatorOrReadOnly
 
