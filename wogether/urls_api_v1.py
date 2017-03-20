@@ -9,15 +9,15 @@ from exercise.views import ExerciseViewSet
 
 router = routers.DefaultRouter()
 router.register(r'users', AccountViewSet)
-#router.register(r'myworkouts', MyWorkoutsViewSet, base_name='myworkouts')
 router.register(r'workout', WorkoutViewSet)
 router.register(r'exercise', ExerciseViewSet)
 
 
-workouts_router = routers.NestedSimpleRouter(router, r'workout', lookup='workout')
+workouts_router = routers.NestedSimpleRouter(router, r'workouts', lookup='workout')
 workouts_router.register(r'steps',
                           StepNestedInWorkoutViewSet,
                           base_name='workout-steps')
+#workouts_router.register(r'detail')
 
 urlpatterns = [
     url(r'^', include(router.urls)),

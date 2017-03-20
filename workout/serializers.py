@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from exercise.serializers import ExerciseSerializer
 from round.models import Round, Step
-from workout.models import Workout, WorkoutItemNode, WorkoutTree
+from workout.models import Workout, WorkoutTree
 
 
 class WorkoutSerializer(serializers.ModelSerializer):
@@ -64,7 +64,7 @@ class WorkoutTreeSerializer(serializers.ModelSerializer):
         model = WorkoutTree
         fields = ('round', 'step',)
 
-class WorkoutDetailSerializer(serializers.ModelSerializer):
+class WorkoutTreeDetailSerializer(serializers.ModelSerializer):
     """
     Used to get detailed vision of a workout > rounds > steps > exercises
     """
@@ -84,4 +84,6 @@ class WorkoutDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = WorkoutTree
         fields = ('__all__')
+        
+        
 

@@ -5,29 +5,9 @@ from wogether.settings import AUTH_USER_MODEL
 from workout.constants import Workout_Type, ONESHOT
 
 
-###################################################
-
 class WorkoutTree(MP_Node):
     node_order_by = None
 
-class WorkoutItemNode(WorkoutTree):
-    round = models.OneToOneField('round.Round', related_name='wod_rounds', on_delete=models.CASCADE, null=True)
-    step = models.OneToOneField('round.Step', related_name='wod_steps', on_delete=models.CASCADE, null=True)
-
-    def get_workout(self):
-        if self.is_round_node():
-            return self.round.workout
-        elif self.is_step_node():
-            return self.step.workout
-    
-    def is_round_node(self):
-        return self.round is not None
-    
-    def is_step_node(self):
-        return self.step is not None
-
-
-###################################################
 
 class WorkoutManager(MP_NodeManager):
     def create(self, *args, **kwargs):

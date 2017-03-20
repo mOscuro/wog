@@ -1,14 +1,15 @@
+from django.db.models import Q
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, permissions
 from rest_framework.generics import get_object_or_404
-from django_filters.rest_framework import DjangoFilterBackend
-from django.db.models import Q
 
-from workout.serializers import WorkoutDetailSerializer, StepSerializer,\
-    WorkoutListSerializer, WorkoutSerializer
-from workout.models import Workout
 from round.models import Step
 from workout.constants import STAFF, PUBLIC
+from workout.models import Workout, WorkoutTree
 from workout.permissions import IsCreatorOrReadOnly, IsWorkoutCreatorOrReadOnly
+from workout.serializers import WorkoutDetailSerializer, StepSerializer, \
+    WorkoutListSerializer, WorkoutSerializer
+
 
 class WorkoutViewSet(viewsets.ModelViewSet):
     """
@@ -70,4 +71,14 @@ class StepNestedInWorkoutViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Step.objects.filter(workout=self.kwargs['workout_pk'])
+
+   
+class WorkoutTreeViewSet(viewsets.ModelViewSet):
+    """
+    API viewset used to display task lists for a given `project` (list, retrieve)
+    """
+    serializer_class = WorkoutTreeDetailSerializer
+    #object_permission_class = ProjectObjectPermissions
+    def get_queryset(self):
+        return WorkoutTree.objects.filter(workout=self.kwargs['workout_pk'])
     

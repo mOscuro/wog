@@ -9,7 +9,6 @@ from account.models import User
 from exercise.exercise_constants import AMATEUR, MEDIUM, BODYWEIGHT
 from exercise.models import Exercise
 from workout.models import Workout
-from round.models import Round, Step
 from round.helpers import create_round, create_step
 
 

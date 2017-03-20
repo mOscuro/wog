@@ -48,8 +48,6 @@ INSTALLED_APPS = [
     'workout',
     'round',
     'exercise',
-    
-    'rest_framework_docs',
 ]
 
 MIDDLEWARE = [

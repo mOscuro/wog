@@ -1,18 +1,23 @@
 from django.db import models
+from treebeard.mp_tree import MP_NodeManager
 
-from workout.models import WorkoutItemNode
+from workout.models import WorkoutTree
 
 
-class RoundManager(models.Manager):
+class RoundItemNode(WorkoutTree):
+    round = models.OneToOneField('round.Round')
+
+    
+class RoundManager(MP_NodeManager):
     def create(self, *args, **kwargs):
         if kwargs.get('workout', None) is None:
             raise AttributeError(_('Workout must be provided'))
 
-        new_round = super(RoundManager, self).create(*args, **kwargs) 
-        new_round.workout.add_child(instance=WorkoutItemNode(round=new_round))
+        new_round = super(MP_NodeManager, self).create(*args, **kwargs) 
+        new_round.workout.add_child(instance=RoundItemNode(round=new_round))
         return new_round
 
-class Round(models.Model):
+class Round(WorkoutTree):
     """
     - A Round is a container for steps.
     It can be repeated multiple times during the execution of the Workout.    
@@ -35,7 +40,11 @@ class Round(models.Model):
             return self.nb_repeat+" rounds of "
 
 
-class StepManager(models.Manager):
+class StepItemNode(WorkoutTree):
+    step = models.OneToOneField('round.Step')
+    
+    
+class StepManager(MP_NodeManager):
     def create(self, *args, **kwargs):
         
         workout_positioning = True
@@ -48,23 +57,16 @@ class StepManager(models.Manager):
                 raise AttributeError(_('Either a workout or a specific round should be provided'))
             
         new_step = super(StepManager, self).create(*args, **kwargs)
-#         new_step = Step(workout=kwargs['workout'], 
-#                             round=kwargs.get('round', None),
-#                             exercise=kwargs['exercise'],
-#                             nb_rep=kwargs.get('nb_rep', 1),
-#                             distance=kwargs.get('distance', 0),
-#                             weight=kwargs.get('weight', 0),
-#                             rest_time=kwargs.get('rest_time', 0),)
         
         if round_positioning:
-            round_node = WorkoutItemNode.objects.get(round=kwargs['round'])
-            round_node.add_child(instance=WorkoutItemNode(step=new_step))
+            round_node = RoundItemNode.objects.get(round=kwargs['round'])
+            round_node.add_child(instance=StepItemNode(step=new_step))
         elif workout_positioning:
-            kwargs['workout'].add_child(instance=WorkoutItemNode(step=new_step))
+            kwargs['workout'].add_child(instance=StepItemNode(step=new_step))
 
         return new_step
 
-class Step(models.Model):
+class Step(WorkoutTree):
     """
     - A Step describes the smallest part of a Workout
     - Exemples :
