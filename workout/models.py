@@ -18,7 +18,7 @@ class Workout(WorkoutTree):
    
     name = models.CharField(max_length=100)
     type = models.IntegerField(choices=Workout_Type, default=ONESHOT)
-    creator = models.ForeignKey(AUTH_USER_MODEL, related_name='workout')
+    creator = models.ForeignKey(AUTH_USER_MODEL, related_name='workouts')
     amrap = models.IntegerField(default=0)
     emom = models.IntegerField(default=0)
     description = models.TextField(blank=True)

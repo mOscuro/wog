@@ -77,7 +77,7 @@ class Command(BaseCommand):
         print("Creating some admin workout...")
         admin_workout1 = Workout.objects.create(name="Aphrodite", type=STAFF, creator=admin_user)
         cpt_rep = 50
-        for cpt_round in range(1, 5):
+        for cpt_round in range(5):
             admin_workout1_rounds = create_round({'workout' : admin_workout1})
             create_step({'round' : admin_workout1_rounds, 'exercise' : burpees, 'nb_rep' : cpt_rep})
             create_step({'round' : admin_workout1_rounds, 'exercise' : air_squats, 'nb_rep' : cpt_rep})

@@ -8,7 +8,7 @@ from workout.constants import STAFF, PUBLIC
 from workout.models import Workout, WorkoutTree
 from workout.permissions import IsCreatorOrReadOnly, IsWorkoutCreatorOrReadOnly
 from workout.serializers import WorkoutDetailSerializer, StepSerializer, \
-    WorkoutListSerializer, WorkoutSerializer
+    WorkoutListSerializer, WorkoutSerializer, WorkoutTreeSerializer
 
 
 class WorkoutViewSet(viewsets.ModelViewSet):
@@ -72,13 +72,12 @@ class StepNestedInWorkoutViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Step.objects.filter(workout=self.kwargs['workout_pk'])
 
-   
+
 class WorkoutTreeViewSet(viewsets.ModelViewSet):
-    """
-    API viewset used to display task lists for a given `project` (list, retrieve)
-    """
-    serializer_class = WorkoutTreeDetailSerializer
-    #object_permission_class = ProjectObjectPermissions
+
+    serializer_class = WorkoutTreeSerializer
+
     def get_queryset(self):
         return WorkoutTree.objects.filter(workout=self.kwargs['workout_pk'])
+        #return Workout.objects.get(id=self.kwargs['workout_pk']).get_children()
     

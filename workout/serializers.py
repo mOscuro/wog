@@ -49,41 +49,73 @@ class RoundSerializer(serializers.ModelSerializer):
         model = Round 
         fields = ('nb_repeat', 'round_steps')
 
-class WorkoutTreeSerializer(serializers.ModelSerializer):
-    round = serializers.CharField(source='workoutitemnode.round')
-    step = serializers.CharField(source='workoutitemnode.step')
+class WorkoutDetailSerializer(serializers.ModelSerializer):
+#     round = serializers.CharField(source='workoutitemnode.round')
+#     step = serializers.CharField(source='workoutitemnode.step')
+    name = serializers.CharField()
 
-#     def get_item(self, obj):
-#         return 'item'
-#         if obj.round is not None:
-#             return obj.round
-#         elif obj.step is not None:
-#             return obj.step
-    
     class Meta:
-        model = WorkoutTree
-        fields = ('round', 'step',)
+        model = Workout
+        fields = ('name',)
 
-class WorkoutTreeDetailSerializer(serializers.ModelSerializer):
-    """
-    Used to get detailed vision of a workout > rounds > steps > exercises
-    """
-    #id = serializers.IntegerField(source='gantttreeitem.task.id')
-    #rounds = RoundSerializer(many=True)
-    items = serializers.SerializerMethodField()
+#---------------------------------------------------
+# DEALING WITH TREES
+#---------------------------------------------------
+
+class WorkoutTreeStepSerializer(serializers.ModelSerializer):
+    
+    id = serializers.IntegerField(source='step.id')
+#     nb_rep = serializers.IntegerField(source='step.nb_rep')
+#     weight = serializers.IntegerField(source='step.weight')
+    exercise = ExerciseSerializer()
     type = serializers.SerializerMethodField()
     
-    def get_items(self, obj):
-        queryset = WorkoutTree.objects.filter(workoutitemnode__round__workout=obj, workoutitemnode__step__workout=obj)
-        serializer = WorkoutTreeSerializer(queryset, many=True)
-        return serializer.data
+    def get_type(self, obj):
+        return "Step"
     
-    def get_type(self,obj):
-        return obj.get_type_display()
+    class Meta:
+        model = Step
+        fields = ('id', 'type', 'nb_rep', 'exercise', 'weight')
+
+
+class WorkoutTreeRoundSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(source='round.id')
+    round_steps = WorkoutTreeStepSerializer(many=True)
+    type = serializers.SerializerMethodField()
+    
+    def get_type(self, obj):
+        return "Round"
         
     class Meta:
+        model = Round 
+        fields = ('id', 'type', 'nb_repeat', 'round_steps')
+
+
+class WorkoutTreeItemSerializer(serializers.ModelSerializer):
+    item = serializers.SerializerMethodField()
+
+    def get_item(self, obj):
+        if hasattr(obj, 'round'):
+            return WorkoutTreeRoundSerializer(instance=obj.round).data
+        else:
+            return WorkoutTreeStepSerializer(instance=obj.step).data
+    
+    class Meta:
         model = WorkoutTree
-        fields = ('__all__')
+        fields = ('item',)
         
-        
+
+class WorkoutTreeSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(source='workout.id')
+    name = serializers.CharField(source='workout.name')
+    test = serializers.SerializerMethodField()
+    
+    def get_test(self, obj):
+        queryset = obj.get_children()
+        serializer = WorkoutTreeItemSerializer(queryset, many=True)
+        return serializer.data
+    
+    class Meta:
+        model = WorkoutTree
+        fields = ('id', 'name', 'test')
 
