@@ -2,6 +2,4 @@ env/
 .pydevproject
 .project
 .settings
-db.sqlite3
-*migrations*
 *_pycache_*
