@@ -68,6 +68,7 @@ class Command(BaseCommand):
         jumps = Exercise.objects.create(name="Jumps", level=AMATEUR, type=BODYWEIGHT)
         pushups = Exercise.objects.create(name="Pushups", level=AMATEUR, type=BODYWEIGHT)
         pullups = Exercise.objects.create(name="Pullups", level=MEDIUM, type=BODYWEIGHT)
+        running = Exercise.objects.create(name="Running", level=AMATEUR, type=BODYWEIGHT)
         
         #=======================================================================
         # ADMINISTRATORS WORKOUTS
@@ -140,6 +141,15 @@ class Command(BaseCommand):
         create_step({'round' : user1_workout2_4round, 'exercise' : pushups, 'nb_rep' : 20})
         create_step({'round' : user1_workout2_4round, 'exercise' : situps, 'nb_rep' : 20})
         create_step({'round' : user1_workout2_4round, 'exercise' : air_squats, 'nb_rep' : 20})
+        
+        user1_workout3 = Workout.objects.create(name="Public Custom Workout 2", type=PUBLIC, creator=user1)
+        # Mixing Steps and Rounds pattern
+        create_step({'workout' : user1_workout3, 'exercise' : running, 'nb_rep' : 1, 'distance' : '1000'})
+        user1_workout3_5rounds = create_round({'workout' : user1_workout3, 'nb_repeat' : 5})
+        create_step({'round' : user1_workout3_5rounds, 'exercise' : pullups, 'nb_rep' : 20})
+        create_step({'round' : user1_workout3_5rounds, 'exercise' : pushups, 'nb_rep' : 40})
+        create_step({'round' : user1_workout3_5rounds, 'exercise' : air_squats, 'nb_rep' : 60})
+        create_step({'workout' : user1_workout3, 'exercise' : running, 'nb_rep' : 1, 'distance' : '1000'})
  
         #=======================================================================
         # USER 2 WORKOUTS

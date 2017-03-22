@@ -79,5 +79,4 @@ class WorkoutTreeViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return WorkoutTree.objects.filter(workout=self.kwargs['workout_pk'])
-        #return Workout.objects.get(id=self.kwargs['workout_pk']).get_children()
     

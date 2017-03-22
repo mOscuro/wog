@@ -56,7 +56,8 @@ class StepManager(MP_NodeManager):
         new_step = Step(_workout=kwargs['_workout'],
                         _round=kwargs['_round'],
                         exercise=kwargs['exercise'],
-                        nb_rep=kwargs['nb_rep'])        
+                        nb_rep=kwargs['nb_rep'],
+                        distance=kwargs['distance'])        
         
         if round_positioning:
             kwargs['_round'].add_child(instance=new_step)
