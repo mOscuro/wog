@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     'treebeard',
     
     # Wogether apps
-    'account',
+    'user_account',
     'workout',
     'round',
     'exercise',
@@ -121,6 +121,18 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+AUTHENTICATION_BACKENDS = (
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+
+    'guardian.backends.ObjectPermissionBackend',
+)
+
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
@@ -128,7 +140,7 @@ REST_FRAMEWORK = {
     ),
 }
 
-AUTH_USER_MODEL = 'account.User'
+AUTH_USER_MODEL = 'user_account.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/

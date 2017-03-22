@@ -19,8 +19,8 @@ from django.contrib import admin
 
 urlpatterns = [
     # APIs
-    url(r'^auth/', include('account.authentication.urls')),
-    #url(r'^auth/registration/', include('account.registration.urls')),
+    url(r'^auth/', include('user_account.authentication.urls')),
+    #url(r'^auth/registration/', include('user_account.registration.urls')),
     
     # All URLs related to REST API v1 are included in urls_api module
     url(r'^api/v1/', include('wogether.urls_api_v1')),
