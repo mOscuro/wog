@@ -13,11 +13,26 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    # APIs
+    url(r'^auth/', include('account.authentication.urls')),
+    #url(r'^auth/registration/', include('account.registration.urls')),
+    
+    # All URLs related to REST API v1 are included in urls_api module
     url(r'^api/v1/', include('wogether.urls_api_v1')),
 ]
+
+
+if settings.DEBUG:
+    # The URLs listed below are intended to be present only when DEBUG is set to True
+    urlpatterns += [
+        # URLs for API Authentication
+        url(r'^api/auth/', include('rest_framework.urls', namespace='rest_framework')),
+
+        # URLs for admin section
+        url(r'^admin/', admin.site.urls),
+    ]

@@ -39,11 +39,22 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    # The Django sites framework is required for allauth app
+    'django.contrib.sites',
+
+    # Contribution apps
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_auth',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'rest_auth.registration',
+    'guardian',
     'treebeard',
-    'crispy_forms', # Created HTML filters in the browsable API and Admin
     
+    # Wogether apps
     'account',
     'workout',
     'round',
