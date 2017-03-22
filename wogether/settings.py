@@ -39,12 +39,23 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    # The Django sites framework is required for allauth app
+    'django.contrib.sites',
+
+    # Contribution apps
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_auth',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'rest_auth.registration',
+    'guardian',
     'treebeard',
-    'crispy_forms', # Created HTML filters in the browsable API and Admin
     
-    'account',
+    # Wogether apps
+    'user_account',
     'workout',
     'round',
     'exercise',
@@ -110,6 +121,18 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+AUTHENTICATION_BACKENDS = (
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+
+    'guardian.backends.ObjectPermissionBackend',
+)
+
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
@@ -117,7 +140,7 @@ REST_FRAMEWORK = {
     ),
 }
 
-AUTH_USER_MODEL = 'account.User'
+AUTH_USER_MODEL = 'user_account.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/

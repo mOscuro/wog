@@ -2,13 +2,13 @@ from django.conf.urls import url, include
 from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework_nested import routers
 
-from account.views import AccountViewSet
+from user_account.views import UserAccountViewSet
 from workout.views import WorkoutViewSet, StepNestedInWorkoutViewSet, WorkoutTreeViewSet
 from exercise.views import ExerciseViewSet
 
 
 router = routers.DefaultRouter()
-router.register(r'users', AccountViewSet)
+router.register(r'users', UserAccountViewSet)
 router.register(r'workouts', WorkoutViewSet)
 router.register(r'exercises', ExerciseViewSet)
 

@@ -5,7 +5,7 @@
 
 from django.core.management.base import BaseCommand
 
-from account.models import User
+from user_account.models import User
 from exercise.exercise_constants import AMATEUR, MEDIUM, BODYWEIGHT
 from exercise.models import Exercise
 from workout.models import Workout
