@@ -12,6 +12,12 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 
+from wogether.app_settings.allauth import *  # @UnusedWildImport
+#from wogether.app_settings.grappelli import *  # @UnusedWildImport
+from wogether.app_settings.guardian import *  # @UnusedWildImport
+from wogether.app_settings.rest import *  # @UnusedWildImport
+from wogether.app_settings.restauth import *  # @UnusedWildImport
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -131,14 +137,6 @@ AUTHENTICATION_BACKENDS = (
 
     'guardian.backends.ObjectPermissionBackend',
 )
-
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication'   
-    ),
-}
 
 AUTH_USER_MODEL = 'user_account.User'
 
