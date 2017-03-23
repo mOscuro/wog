@@ -28,11 +28,11 @@
 # }
 
 REST_AUTH_SERIALIZERS = {
-    'LOGIN_SERIALIZER': 'bb_user.authentication.serializers.CustomLoginSerializer',
-    'PASSWORD_RESET_SERIALIZER': 'bb_user.authentication.serializers.CustomPasswordResetSerializer',
-    'PASSWORD_RESET_CONFIRM_SERIALIZER': 'bb_user.authentication.serializers.CustomPasswordResetConfirmSerializer',
-    'PASSWORD_CHANGE_SERIALIZER': 'bb_user.authentication.serializers.CustomPasswordChangeSerializer',
-    'USER_DETAILS_SERIALIZER': 'bb_user.authentication.serializers.UserDetailsSerializer',
+    'LOGIN_SERIALIZER': 'user_account.authentication.serializers.CustomLoginSerializer',
+    'PASSWORD_RESET_SERIALIZER': 'user_account.authentication.serializers.CustomPasswordResetSerializer',
+    'PASSWORD_RESET_CONFIRM_SERIALIZER': 'user_account.authentication.serializers.CustomPasswordResetConfirmSerializer',
+    'PASSWORD_CHANGE_SERIALIZER': 'user_account.authentication.serializers.CustomPasswordChangeSerializer',
+    'USER_DETAILS_SERIALIZER': 'user_account.authentication.serializers.UserDetailsSerializer',
 }
 
 # REST_AUTH_REGISTER_SERIALIZERS
@@ -42,7 +42,7 @@ REST_AUTH_SERIALIZERS = {
 # REGISTER_SERIALIZER - serializer class in rest_auth.register.views.RegisterView, default value
 # rest_auth.register.serializers.RegisterSerializer
 REST_AUTH_REGISTER_SERIALIZERS = {
-    'REGISTER_SERIALIZER': 'bb_user.registration.serializers.CustomRegisterSerializer',
+    'REGISTER_SERIALIZER': 'user_account.registration.serializers.CustomRegisterSerializer',
 }
 
 # REST_AUTH_TOKEN_MODEL - model class for tokens, default value rest_framework.authtoken.models

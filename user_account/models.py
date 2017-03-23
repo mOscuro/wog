@@ -64,7 +64,7 @@ class AbstractAccount(AbstractBaseUser, PermissionsMixin):
     objects = AccountManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['email']
+    REQUIRED_FIELDS = ['first_name', 'last_name']
     
     class Meta:
         verbose_name = _('user')
