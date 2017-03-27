@@ -31,7 +31,40 @@ SECRET_KEY = '+wt@m4xb5e(h4epc#6mo#m-e_^d0b_veaix+h$2hth2(r20grr'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+
+SITE_ID = 1
+
+#########################################
+# EMAIL CONFIGURATION
+#########################################
+#EMAIL_HOST = '192.168.0.250'
+# EMAIL_HOST_PASSWORD = ''
+# EMAIL_HOST_USER = ''
+# EMAIL_PORT = 25
+# EMAIL_SUBJECT_PREFIX = '[Wogether]'
+# DEFAULT_FROM_EMAIL = 'no-reply@wogether.com'
+
+
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'matthieu.oscuro@gmail.com'
+EMAIL_HOST_PASSWORD = 'marionne44'
+EMAIL_SUBJECT_PREFIX = '[Wogether]'
+#DEFAULT_FROM_EMAIL = 'no-reply@wogether.com'
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+ROOT_URLCONF = 'wogether.urls'
+
+EXTERNAL_URLCONFS = (
+    (os.environ.get('FRONTEND_URL', 'http://127.0.0.1:8000'), 'wogether.urls_external'),
+)
 
 # Login redirection rule
 #LOGIN_REDIRECT_URL = "/api/v1/"

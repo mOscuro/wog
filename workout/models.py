@@ -46,6 +46,9 @@ class Workout(WorkoutTree):
     
     class Meta:
         unique_together = (('creator', 'name'),)
+        permissions = (
+            ('view_workout', 'Can view the Workout'),
+        )
 
     
 class Session(models.Model):

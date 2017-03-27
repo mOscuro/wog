@@ -29,3 +29,19 @@ class IsWorkoutCreatorOrReadOnly(permissions.BasePermission):
         # Write permissions are only allowed to the creator of the Workout.
         #pdb.set_trace()
         return obj.workout.creator == request.user
+
+#===============================================================================
+
+from rest_framework.permissions import DjangoObjectPermissions
+
+
+class WorkoutObjectPermissions(DjangoObjectPermissions):
+    perms_map = {
+        'GET': ['workout.view_project'],
+        'OPTIONS': [],
+        'HEAD': [],
+        'POST': ['workout.add_workout'],
+        'PUT': ['workout.change_workout'],
+        'PATCH': ['workout.change_workout'],
+        'DELETE': ['workout.delete_workout'],
+    }

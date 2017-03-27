@@ -1,5 +1,4 @@
 from django.db.models import Q
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, permissions
 from rest_framework.generics import get_object_or_404
 
@@ -7,7 +6,7 @@ from round.models import Step
 from workout.constants import STAFF, PUBLIC
 from workout.models import Workout, WorkoutTree
 from workout.permissions import IsCreatorOrReadOnly, IsWorkoutCreatorOrReadOnly
-from workout.serializers import WorkoutDetailSerializer, StepSerializer, \
+from workout.serializers import StepSerializer, \
     WorkoutListSerializer, WorkoutSerializer, WorkoutTreeSerializer
 
 
@@ -25,7 +24,6 @@ class WorkoutViewSet(viewsets.ModelViewSet):
     queryset = Workout.objects.all()
     serializer_class = WorkoutListSerializer
     permission_classes = (permissions.IsAuthenticated, IsCreatorOrReadOnly,)
-    filter_backends = (DjangoFilterBackend,)
     filter_fields = ('type', 'creator',)
     
     def get_queryset(self):
@@ -35,17 +33,12 @@ class WorkoutViewSet(viewsets.ModelViewSet):
         # Only ADMIN users can see all the workout
         if not user.is_staff:
             queryset = queryset.filter(Q(creator=user.id) | Q(type=STAFF) | Q(type=PUBLIC))
-      
-        # Query parameter to get only logged user workout
-        perso = self.request.query_params.get('perso', None)
-        if perso is not None:
-            queryset =  queryset.filter(creator=user)    
 
         return queryset
     
     def get_serializer_class(self):
         if self.action in ['retrieve', 'destroy']:
-            return WorkoutDetailSerializer
+            return WorkoutTreeSerializer
         elif self.action in ['create', 'update', 'partial_update']:
             return WorkoutSerializer
         return WorkoutListSerializer
