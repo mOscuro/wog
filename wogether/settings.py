@@ -38,26 +38,26 @@ SITE_ID = 1
 #########################################
 # EMAIL CONFIGURATION
 #########################################
-#EMAIL_HOST = '192.168.0.250'
-# EMAIL_HOST_PASSWORD = ''
-# EMAIL_HOST_USER = ''
-# EMAIL_PORT = 25
-# EMAIL_SUBJECT_PREFIX = '[Wogether]'
-# DEFAULT_FROM_EMAIL = 'no-reply@wogether.com'
-
-
-
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'matthieu.oscuro@gmail.com'
-EMAIL_HOST_PASSWORD = 'marionne44'
+EMAIL_HOST = '192.168.0.250'
+#  EMAIL_HOST_PASSWORD = ''
+#  EMAIL_HOST_USER = ''
+#  EMAIL_PORT = 25
 EMAIL_SUBJECT_PREFIX = '[Wogether]'
-#DEFAULT_FROM_EMAIL = 'no-reply@wogether.com'
+DEFAULT_FROM_EMAIL = 'no-reply@wogether.com'
 
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# EMAIL_USE_TLS = True
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = 'matthieu.oscuro@gmail.com'
+# EMAIL_HOST_PASSWORD = 'marionne44'
+# EMAIL_SUBJECT_PREFIX = '[Wogether]'
+# #DEFAULT_FROM_EMAIL = 'no-reply@wogether.com'
+# 
+# DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+# 
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 ROOT_URLCONF = 'wogether.urls'
