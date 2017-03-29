@@ -4,6 +4,7 @@
 #===============================================================================
 
 from rest_framework import permissions
+from rest_framework.permissions import DjangoObjectPermissions
 
 
 class IsCreatorOrReadOnly(permissions.BasePermission):
@@ -31,9 +32,6 @@ class IsWorkoutCreatorOrReadOnly(permissions.BasePermission):
         return obj.workout.creator == request.user
 
 #===============================================================================
-
-from rest_framework.permissions import DjangoObjectPermissions
-
 
 class WorkoutObjectPermissions(DjangoObjectPermissions):
     perms_map = {
