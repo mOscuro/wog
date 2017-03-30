@@ -5,7 +5,7 @@ from rest_framework.generics import get_object_or_404
 from round.models import Step
 from workout.constants import STAFF, PUBLIC
 from workout.models import Workout, WorkoutTree
-from workout.permissions import IsCreatorOrReadOnly, IsWorkoutCreatorOrReadOnly
+from permissions.core import IsCreatorOrReadOnly, IsWorkoutCreatorOrReadOnly
 from workout.serializers import StepSerializer, \
     WorkoutListSerializer, WorkoutSerializer, WorkoutTreeSerializer
 

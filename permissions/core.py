@@ -32,6 +32,8 @@ class IsWorkoutCreatorOrReadOnly(permissions.BasePermission):
         return obj.workout.creator == request.user
 
 #===============================================================================
+# PERMISSIONS MAPPING FOR WORKOUT REQUESTS
+#===============================================================================
 
 class WorkoutObjectPermissions(DjangoObjectPermissions):
     perms_map = {
