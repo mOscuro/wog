@@ -48,6 +48,16 @@ class Workout(WorkoutTree):
         unique_together = (('creator', 'name'),)
         permissions = (
             ('view_workout', 'Can view the Workout'),
+            
+            ('view_workout_step', 'View create a step on a Workout'),
+            ('add_workout_step', 'Can create a step on a Workout'),
+            ('change_workout_step', 'Can update a step on a Workout'),
+            ('delete_workout_step', 'Can delete a step on a Workout'),
+            
+            ('view_workout_round', 'View create a round on a Workout'),
+            ('add_workout_round', 'Can create a round on a Workout'),
+            ('change_workout_round', 'Can update a round on a Workout'),
+            ('delete_workout_round', 'Can delete a round on a Workout'),
         )
 
     
