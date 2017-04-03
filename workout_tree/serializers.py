@@ -9,8 +9,11 @@ class WorkoutTreeStepSerializer(serializers.ModelSerializer):
     Serializer used to display Step instance data in Tree viewset
     """
     id = serializers.IntegerField(source='steptreeitem.step.id')
-    exercise = ExerciseSerializer(source='steptreeitem.step.exercise')
     item_type = serializers.SerializerMethodField()
+    exercise = ExerciseSerializer(source='steptreeitem.step.exercise')
+    nb_rep = serializers.IntegerField(source='steptreeitem.step.nb_rep')
+    weight = serializers.IntegerField(source='steptreeitem.step.weight')
+    distance = serializers.IntegerField(source='steptreeitem.step.distance')
     
     def get_item_type(self, obj):
         return "Step"
@@ -25,11 +28,17 @@ class WorkoutTreeRoundSerializer(serializers.ModelSerializer):
     Serializer used to display Round instance data in Tree viewset
     """
     id = serializers.IntegerField(source='roundtreeitem.round.id')
-    round_steps = WorkoutTreeStepSerializer(many=True)
     item_type = serializers.SerializerMethodField()
+    nb_repeat = serializers.IntegerField(source='roundtreeitem.round.nb_repeat')
+    round_steps = serializers.SerializerMethodField()
     
     def get_item_type(self, obj):
         return "Round"
+    
+    def get_round_steps(self, obj):
+        queryset = StepTreeItem.objects.filter(step__round=obj.round)
+        serializer = WorkoutTreeStepSerializer(queryset, many=True)
+        return serializer.data
         
     class Meta:
         model = RoundTreeItem
@@ -50,10 +59,10 @@ class WorkoutTreeSerializer(serializers.ModelSerializer):
         
         item_serializer = []
         for item in item_queryset:
-            if hasattr(item, 'round'):
-                item_serializer.append(WorkoutTreeRoundSerializer(instance=item.round).data)
-            elif hasattr(item, 'step'):
-                item_serializer.append(WorkoutTreeStepSerializer(instance=item.step).data)
+            if hasattr(item, 'roundtreeitem'):
+                item_serializer.append(WorkoutTreeRoundSerializer(instance=item.roundtreeitem).data)
+            elif hasattr(item, 'steptreeitem'):
+                item_serializer.append(WorkoutTreeStepSerializer(instance=item.steptreeitem).data)
         
         return item_serializer
     
