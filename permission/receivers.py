@@ -3,9 +3,10 @@ from django.db.models.signals import post_save
 from django.dispatch.dispatcher import receiver
 from guardian.shortcuts import assign_perm
 
-from permissions.constants import AUTHENTICATED_USER_GROUP
+from permission.constants import AUTHENTICATED_USER_GROUP
 from user_account.models import User
 from workout.models import Workout
+from workout.constants import PUBLIC
 
 
 ######################################
@@ -23,7 +24,7 @@ def give_user_standard_model_permissions(sender, instance, **kwargs):
 @receiver(post_save, sender=Workout)
 def create_workout_permissions(sender, instance, **kwargs):
     """
-    Create specific permissions for the creator of a workout.
+    Create specific permission for the creator of a workout.
     If it is a shared workout, all authenticated users can view the workout
     """
     if kwargs.get('created', True):
@@ -32,6 +33,6 @@ def create_workout_permissions(sender, instance, **kwargs):
         assign_perm('workout.change_workout', creator, instance)
         assign_perm('workout.delete_workout', creator, instance)
         
-        if instance.is_public:
+        if instance.type==PUBLIC:
             auth_group = Group.objects.get(name=AUTHENTICATED_USER_GROUP)
             assign_perm('workout.view_workout', auth_group, instance)

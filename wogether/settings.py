@@ -94,6 +94,7 @@ INSTALLED_APPS = [
     'treebeard',
     
     # Wogether apps
+    'permission',
     'user_account',
     'workout',
     'round',

@@ -11,7 +11,7 @@ from workout.models import Workout
 @receiver(post_save, sender=Workout)
 def add_workout_permissions(sender, instance, **kwargs):
     """
-    Assign admin permissions to the creator of the workout.
+    Assign admin permission to the creator of the workout.
     If the workout is set public, add the workout to the "public workout" permission group.
     """
     #if kwargs.get('created', True):

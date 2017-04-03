@@ -2,7 +2,7 @@ from django.db import models
 from treebeard.mp_tree import MP_Node, MP_NodeManager
 
 from wogether.settings import AUTH_USER_MODEL
-from workout.constants import Workout_Type, ONESHOT
+from workout.constants import Workout_Type, PRIVATE
 
 
 class WorkoutTree(MP_Node):
@@ -17,11 +17,13 @@ class WorkoutManager(MP_NodeManager):
 class Workout(WorkoutTree):
    
     name = models.CharField(max_length=100)
-    type = models.IntegerField(choices=Workout_Type, default=ONESHOT)
+    type = models.IntegerField(choices=Workout_Type, default=PRIVATE)
     creator = models.ForeignKey(AUTH_USER_MODEL, related_name='workouts')
     amrap = models.IntegerField(default=0)
     emom = models.IntegerField(default=0)
     description = models.TextField(blank=True)
+    
+    is_active = models.BooleanField(default=True)
     
     objects = WorkoutManager()
 

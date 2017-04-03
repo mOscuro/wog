@@ -11,6 +11,7 @@ from exercise.models import Exercise
 from round.helpers import create_round, create_step
 from user_account.models import User
 from workout.models import Workout
+from workout.constants import STAFF, PRIVATE, PUBLIC
 
 
 class Command(BaseCommand):
@@ -19,16 +20,10 @@ class Command(BaseCommand):
     
     def handle(self, *args, **options):
         self.create_dev_data()
-        self.stdout.write(self.style.SUCCESS('Successfully created'))
+        self.stdout.write(self.style.SUCCESS('Data successfully created'))
 
     def create_dev_data(self):
 
-        # Constants used to identify workout category
-        STAFF = 1
-        ONESHOT = 2
-        PRIVATE = 3
-        PUBLIC = 4
-        
         #=======================================================================
         # CREATE 1 SUPERUSER
         #=======================================================================
