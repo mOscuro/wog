@@ -3,7 +3,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework_nested import routers
 
 from user_account.views import UserAccountViewSet
-from workout.views import WorkoutViewSet, StepNestedInWorkoutViewSet, WorkoutTreeViewSet
+from workout.views import WorkoutViewSet, WorkoutTreeViewSet
 from exercise.views import ExerciseViewSet
 
 
@@ -14,9 +14,6 @@ router.register(r'exercises', ExerciseViewSet)
 
 
 workouts_router = routers.NestedSimpleRouter(router, r'workouts', lookup='workout')
-workouts_router.register(r'steps',
-                          StepNestedInWorkoutViewSet,
-                          base_name='workout-steps')
 workouts_router.register(r'tree',
                          WorkoutTreeViewSet,
                          base_name='workout-tree')

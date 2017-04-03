@@ -1,8 +1,8 @@
 from django.apps import AppConfig
 
 
-class USerAccountConfig(AppConfig):
+class UserAccountConfig(AppConfig):
     name = 'user_account'
 
-#     def ready(self):
-#         from . import signals
+    def ready(self):
+        import user_account.receivers  # @UnusedImport
