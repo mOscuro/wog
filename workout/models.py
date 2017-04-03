@@ -1,20 +1,30 @@
+from django.utils.translation import ugettext_lazy as _
 from django.db import models
-from treebeard.mp_tree import MP_Node, MP_NodeManager
 
 from wogether.settings import AUTH_USER_MODEL
 from workout.constants import Workout_Type, PRIVATE
+from workout_tree.models import WorkoutTreeItem
 
 
-class WorkoutTree(MP_Node):
-    node_order_by = None
-
-
-class WorkoutManager(MP_NodeManager):
+class WorkoutManager(models.Manager):
     def create(self, *args, **kwargs):
-        new_workout = Workout.add_root(*args, **kwargs)
+        
+        if kwargs.get('name', None) is None:
+            raise AttributeError(_('Workout name is mandatory'))
+
+#         new_workout = Workout.objects.create(name=kwargs.get('name'),
+#                                              type=kwargs.get('type'),
+#                                              creator=kwargs.get('creator'))
+        
+        new_workout = super(WorkoutManager, self).create(*args, **kwargs)
+#         workout_tree_item = WorkoutTreeItem(workout=new_workout)        
+#         workout_tree_item.add_root()
+        WorkoutTreeItem.add_root(workout=new_workout)    
+        
+        
         return new_workout
 
-class Workout(WorkoutTree):
+class Workout(models.Model):
    
     name = models.CharField(max_length=100)
     type = models.IntegerField(choices=Workout_Type, default=PRIVATE)

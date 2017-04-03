@@ -97,6 +97,7 @@ INSTALLED_APPS = [
     'permission',
     'user_account',
     'workout',
+    'workout_tree',
     'round',
     'exercise',
 ]

@@ -11,7 +11,7 @@ def create_round(params):
     else:
         raise AttributeError(_('missing parameters [workout]'))
 
-    return Round.objects.create(_workout=workout,
+    return Round.objects.create(workout=workout,
                                nb_repeat=params.get('nb_repeat', 1))
 
 def create_step(params):
@@ -23,14 +23,14 @@ def create_step(params):
     * workout
     """
     if params.get('round', None) is not None:
-        workout = params.get('round').get_workout()
+        workout = params.get('round').workout
     elif params.get('workout', None) is not None:
         workout = params.get('workout')
     else:
         raise AttributeError(_('missing parameters [workout or round]'))
 
-    return Step.objects.create(_workout=workout,
-                               _round=params.get('round', None),
+    return Step.objects.create(workout=workout,
+                               round=params.get('round', None),
                                exercise=params.get('exercise', None),
                                nb_rep=params.get('nb_rep', 1),
                                distance=params.get('distance', 1))

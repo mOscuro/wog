@@ -1,37 +1,31 @@
+from django.utils.translation import ugettext_lazy as _
 from django.db import models
-from treebeard.mp_tree import MP_NodeManager
 
-from workout.models import WorkoutTree
+from workout_tree.models import WorkoutTreeItem, RoundTreeItem, StepTreeItem
 
-    
-class RoundManager(MP_NodeManager):
+
+class RoundManager(models.Manager):
     def create(self, *args, **kwargs):
-        if kwargs.get('_workout', None) is None:
+        if kwargs.get('workout', None) is None:
             raise AttributeError(_('Workout must be provided'))
 
-        new_round = Round(_workout=kwargs['_workout'],
-                          nb_repeat=kwargs['nb_repeat']) 
+        new_round = super(RoundManager, self).create(*args, **kwargs)
+#         new_round = Round.objects.create(workout=kwargs['_workout'],
+#                           nb_repeat=kwargs['nb_repeat'])
         
-        kwargs['_workout'].add_child(instance=new_round)
+        workout_tree_item = WorkoutTreeItem.objects.get(workout=kwargs['workout'])
+        workout_tree_item.add_child(instance=RoundTreeItem(round=new_round))
         return new_round
 
-class Round(WorkoutTree):
+class Round(models.Model):
     """
     - A Round is a container for steps.
     It can be repeated multiple times during the execution of the Workout.    
     """
-    _workout = models.ForeignKey('workout.Workout', related_name='rounds', on_delete=models.CASCADE)
+    workout = models.ForeignKey('workout.Workout', related_name='rounds', on_delete=models.CASCADE)
     nb_repeat = models.IntegerField(default=1)
     
     objects = RoundManager()
-    
-    def get_workout(self):
-        return self._workout
-    
-    def has_tree_problems(self):
-        problems = self.find_problems()
-        print(problems)
-        return (sum([len(problems[i]) for i in range(len(problems))]) != 0)
     
     def __str__(self):
         return "1 round of "
@@ -41,33 +35,36 @@ class Round(WorkoutTree):
             return self.nb_repeat+" rounds of "
     
     
-class StepManager(MP_NodeManager):
+class StepManager(models.Manager):
     def create(self, *args, **kwargs):
         
         workout_positioning = True
         round_positioning = True
         
-        if kwargs.get('_round', None) is None:
+        if kwargs.get('round', None) is None:
             round_positioning = False
-            if kwargs.get('_workout', None) is None:
+            if kwargs.get('workout', None) is None:
                 workout_positioning = False
                 raise AttributeError(_('Either a workout or a specific round should be provided'))
         
-        new_step = Step(_workout=kwargs['_workout'],
-                        _round=kwargs['_round'],
-                        exercise=kwargs['exercise'],
-                        nb_rep=kwargs['nb_rep'],
-                        distance=kwargs['distance'])        
+        new_step = super(StepManager, self).create(*args, **kwargs)
+#         new_step = Step.objects.create(workout=kwargs['workout'],
+#                         round=kwargs['round'],
+#                         exercise=kwargs['exercise'],
+#                         nb_rep=kwargs['nb_rep'],
+#                         distance=kwargs['distance'])        
         
         if round_positioning:
-            kwargs['_round'].add_child(instance=new_step)
+            round_tree_item = RoundTreeItem.objects.get(round=kwargs['round'])
+            round_tree_item.add_child(instance=StepTreeItem(step=new_step))
         elif workout_positioning:
-            kwargs['_workout'].add_child(instance=new_step)
+            workout_tree_item = WorkoutTreeItem.objects.get(workout=kwargs['workout'])
+            workout_tree_item.add_child(instance=StepTreeItem(step=new_step))
 
         return new_step
 
 
-class Step(WorkoutTree):
+class Step(models.Model):
     """
     - A Step describes the smallest part of a Workout
     - Exemples :
@@ -76,8 +73,8 @@ class Step(WorkoutTree):
     - A Step is always linked to a Workout
     - A Step can be linked to a Round but not always
     """
-    _workout = models.ForeignKey('workout.Workout', related_name='wod_step')
-    _round = models.ForeignKey('Round', related_name='round_steps', null=True)
+    workout = models.ForeignKey('workout.Workout', related_name='wod_step')
+    round = models.ForeignKey('Round', related_name='round_steps', null=True)
     exercise = models.ForeignKey('exercise.Exercise', on_delete=models.CASCADE)
     nb_rep = models.IntegerField(default=1)
     distance = models.IntegerField(default=0)
@@ -87,12 +84,6 @@ class Step(WorkoutTree):
     objects = StepManager()
     #class Meta:
         #unique_together = ('workout', 'numero')
-    
-    def get_workout(self):
-        return self._workout
-    
-    def get_round(self):
-        return self._round
     
     def __str__(self):
         return str(self.nb_rep) + " " + self.exercise.name   

@@ -3,9 +3,9 @@ from rest_framework import mixins, filters, viewsets
 
 from permission.core import WorkoutObjectPermissions
 from workout.constants import STAFF, PUBLIC
-from workout.models import Workout, WorkoutTree
+from workout.models import Workout
 from workout.serializers import WorkoutListSerializer, WorkoutDetailSerializer, \
-WorkoutCreateSerializer, WorkoutDetailUpdateSerializer, WorkoutTreeSerializer
+WorkoutCreateSerializer, WorkoutDetailUpdateSerializer
 
 
 class WorkoutViewSet(mixins.CreateModelMixin,
@@ -53,13 +53,4 @@ class WorkoutViewSet(mixins.CreateModelMixin,
         # TODO: need to remove permissions to everyone on that project in order to trigger websocket
         super(WorkoutViewSet, self).perform_destroy(serializer)
 
-
-class WorkoutTreeViewSet(mixins.ListModelMixin,
-                         mixins.RetrieveModelMixin,
-                         viewsets.GenericViewSet):
-
-    serializer_class = WorkoutTreeSerializer
-
-    def get_queryset(self):
-        return WorkoutTree.objects.filter(workout=self.kwargs['workout_pk'])
 
