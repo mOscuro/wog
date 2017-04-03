@@ -3,13 +3,15 @@
 # @author: Matthieu
 #===============================================================================
 
+from allauth.account.models import EmailAddress
 from django.core.management.base import BaseCommand
 
-from user_account.models import User
 from exercise.exercise_constants import AMATEUR, MEDIUM, BODYWEIGHT
 from exercise.models import Exercise
-from workout.models import Workout
 from round.helpers import create_round, create_step
+from user_account.models import User
+from workout.models import Workout
+from workout.constants import STAFF, PRIVATE, PUBLIC
 
 
 class Command(BaseCommand):
@@ -18,26 +20,20 @@ class Command(BaseCommand):
     
     def handle(self, *args, **options):
         self.create_dev_data()
-        self.stdout.write(self.style.SUCCESS('Successfully created'))
+        self.stdout.write(self.style.SUCCESS('Data successfully created'))
 
     def create_dev_data(self):
 
-        # Constants used to identify workout category
-        STAFF = 1
-        ONESHOT = 2
-        PRIVATE = 3
-        PUBLIC = 4
-        
         #=======================================================================
         # CREATE 1 SUPERUSER
         #=======================================================================
         print("Creating 1 superuser...")
         try:
-            User.objects.create_superuser(username="moscuro",
+            super_user = User.objects.create_superuser(username="moscuro",
                                           email="root@root.com",
                                           password="Password44$")
-            #From AllAuth > todo later
-            #EmailAddress.objects.create(user=suser, email=suser.email, primary=True, verified=True)
+            #From AllAuth
+            EmailAddress.objects.create(user=super_user, email=super_user.email, primary=True, verified=True)
         except Exception as e:
             self.stdout.write(self.style.SUCCESS('Problem occured during superuser creation'))
             self.stdout.write(e)
@@ -48,10 +44,10 @@ class Command(BaseCommand):
         print("Creating 10 users...")
         for i in range(1, 11):
             # Create 10 standard users
-            User.objects.create_user(email="user%d@wogether.com" % i,
+            basic_user = User.objects.create_user(email="user%d@wogether.com" % i,
                                         username="user%d" % i,
                                         password="Password44$")
-
+            EmailAddress.objects.create(user=basic_user, email=basic_user.email, primary=True, verified=True)
         admin_user = User.objects.get(email="root@root.com")
 
         #=======================================================================

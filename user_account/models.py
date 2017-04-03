@@ -1,8 +1,10 @@
 from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
+from django.core.mail import send_mail
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.contrib.auth.models import PermissionsMixin
+from guardian.mixins import GuardianUserMixin
 
 class AccountManager(BaseUserManager):
     use_in_migrations = True
@@ -61,8 +63,8 @@ class AbstractAccount(AbstractBaseUser, PermissionsMixin):
 
     objects = AccountManager()
 
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email']
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['first_name', 'last_name']
     
     class Meta:
         verbose_name = _('user')
@@ -73,7 +75,7 @@ class AbstractAccount(AbstractBaseUser, PermissionsMixin):
         return self.email
 
     def get_full_name(self):
-        return ' '.join([self.prenom, self.nom])
+        return ' '.join([self.first_name, self.last_name])
     
     def get_short_name(self):
         '''
@@ -81,7 +83,13 @@ class AbstractAccount(AbstractBaseUser, PermissionsMixin):
         '''
         return self.first_name
     
-class User(AbstractAccount):
+    def email_user(self, subject, message, from_email=None, **kwargs):
+        """
+        Sends an email to this User.
+        """
+        send_mail(subject, message, from_email, [self.email], **kwargs)
+    
+class User(AbstractAccount, GuardianUserMixin):
     """
     Users within the Django authentication system are represented by this
     model.

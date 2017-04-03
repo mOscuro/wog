@@ -1,11 +1,14 @@
+from django.db.models.query_utils import Q
+from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from exercise.serializers import ExerciseSerializer
 from round.models import Round, Step
 from workout.models import Workout, WorkoutTree
 
 
-class WorkoutSerializer(serializers.ModelSerializer):
+class WorkoutDetailSerializer(serializers.ModelSerializer):
     """
     Used as a homepage for the workout
     """
@@ -19,44 +22,50 @@ class WorkoutSerializer(serializers.ModelSerializer):
         return obj.get_type_display()
 
 
-class WorkoutListSerializer(serializers.HyperlinkedModelSerializer):
+class WorkoutListSerializer(serializers.ModelSerializer):
     """
     Used to display a synthetic list of workouts
     """
     class Meta:
         model = Workout
-        fields = ('name', 'url')
+        fields = ('id', 'name')
 
-
-class StepSerializer(serializers.ModelSerializer):
+class WorkoutCreateSerializer(serializers.ModelSerializer):
     """
-    Retrieve the detailed informations of a step (using Exercise detail).
-    Used to build the detailed of a Round model instance.
+    Serializer for the class Project used when creating projects
     """
-    exercise = ExerciseSerializer()
-    
-    class Meta:
-        model = Step
-        fields = ('id', 'nb_rep', 'exercise', 'weight')
-
-
-class RoundSerializer(serializers.ModelSerializer):
-    """
-    A round is a container for steps.
-    """
-    round_steps = StepSerializer(many=True)
-    class Meta:
-        model = Round 
-        fields = ('nb_repeat', 'round_steps')
-
-class WorkoutDetailSerializer(serializers.ModelSerializer):
-#     round = serializers.CharField(source='workoutitemnode.round')
-#     step = serializers.CharField(source='workoutitemnode.step')
     name = serializers.CharField()
+    type = serializers.CharField(required=False)
+    type = serializers.SerializerMethodField(required=False)
+    creator = serializers.ReadOnlyField(source='creator.username', required=False)
+    
+    def get_type(self,obj):
+        return obj.get_type_display()
+
+    def validate(self, attrs):
+        attrs['creator'] = self.context['request'].user
+        return serializers.ModelSerializer.validate(self, attrs)
 
     class Meta:
         model = Workout
-        fields = ('name',)
+        fields = ('name', 'type', 'creator')
+
+
+class WorkoutDetailUpdateSerializer(serializers.ModelSerializer):
+    """
+    Used to edit infos of a workout (name, visibility, time_cap....)
+    """
+    
+    def validate(self, attrs):
+        workout = Workout.objects.get(id=self.context['view'].kwargs['pk'])
+        if Workout.objects.filter(~Q(id=self.context['view'].kwargs['pk']), creator=workout.creator, name=attrs.get('name')):
+            raise ValidationError(_('You cannot have 2 workouts with same name'))
+        return serializers.ModelSerializer.validate(self, attrs)
+    
+    class Meta:
+        model = Workout
+        fields = ('id', 'name')    
+
 
 #---------------------------------------------------
 # DEALING WITH TREES
