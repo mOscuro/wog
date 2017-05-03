@@ -3,26 +3,7 @@ from django.db import models
 
 from wogether.settings import AUTH_USER_MODEL
 from workout.constants import Workout_Type, PRIVATE
-from workout_tree.models import WorkoutTreeItem
 
-
-class WorkoutManager(models.Manager):
-    def create(self, *args, **kwargs):
-        
-        if kwargs.get('name', None) is None:
-            raise AttributeError(_('Workout name is mandatory'))
-
-#         new_workout = Workout.objects.create(name=kwargs.get('name'),
-#                                              type=kwargs.get('type'),
-#                                              creator=kwargs.get('creator'))
-        
-        new_workout = super(WorkoutManager, self).create(*args, **kwargs)
-#         workout_tree_item = WorkoutTreeItem(workout=new_workout)        
-#         workout_tree_item.add_root()
-        WorkoutTreeItem.add_root(workout=new_workout)    
-        
-        
-        return new_workout
 
 class Workout(models.Model):
    
@@ -35,8 +16,6 @@ class Workout(models.Model):
     
     is_active = models.BooleanField(default=True)
     
-    objects = WorkoutManager()
-
     def __str__(self):
         return self.name
     
@@ -51,10 +30,6 @@ class Workout(models.Model):
         * Workout type : Every minute on the minute for a specified number of minutes
         """
         return self.emom > 0
-    
-    def has_tree_problems(self):
-        problems = self.find_problems()
-        return (sum([len(problems[i]) for i in range(len(problems))]) != 0)
     
     class Meta:
         unique_together = (('creator', 'name'),)

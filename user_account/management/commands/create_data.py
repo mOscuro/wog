@@ -140,12 +140,14 @@ class Command(BaseCommand):
         
         user1_workout3 = Workout.objects.create(name="Public Custom Workout 2", type=PUBLIC, creator=user1)
         # Mixing Steps and Rounds pattern
-        create_step({'workout' : user1_workout3, 'exercise' : running, 'nb_rep' : 1, 'distance' : '1000'})
+        user1_workout3_round1 = create_round({'workout' : user1_workout3, 'nb_repeat' : 1})
+        create_step({'round' : user1_workout3_round1, 'exercise' : running, 'nb_rep' : 1, 'distance' : '1000'})
         user1_workout3_5rounds = create_round({'workout' : user1_workout3, 'nb_repeat' : 5})
         create_step({'round' : user1_workout3_5rounds, 'exercise' : pullups, 'nb_rep' : 20})
         create_step({'round' : user1_workout3_5rounds, 'exercise' : pushups, 'nb_rep' : 40})
         create_step({'round' : user1_workout3_5rounds, 'exercise' : air_squats, 'nb_rep' : 60})
-        create_step({'workout' : user1_workout3, 'exercise' : running, 'nb_rep' : 1, 'distance' : '1000'})
+        user1_workout3_round7 = create_round({'workout' : user1_workout3, 'nb_repeat' : 1})
+        create_step({'round' : user1_workout3_round7, 'exercise' : running, 'nb_rep' : 1, 'distance' : '1000'})
  
         #=======================================================================
         # USER 2 WORKOUTS
@@ -153,15 +155,17 @@ class Command(BaseCommand):
         user2 = User.objects.get(email="user2@wogether.com")
         # 10 minutes AMRAP pattern
         user2_workout1 = Workout.objects.create(name="Private Custom Workout 2", type=PRIVATE, creator=user2, amrap=10)
-        create_step({'workout' : user2_workout1, 'exercise' : lunges, 'nb_rep' : 15})
-        create_step({'workout' : user2_workout1, 'exercise' : pushups, 'nb_rep' : 10})
-        create_step({'workout' : user2_workout1, 'exercise' : lunges, 'nb_rep' : 15})
-        create_step({'workout' : user2_workout1, 'exercise' : situps, 'nb_rep' : 20})
+        user2_workout1_round1 = create_round({'workout' : user2_workout1, 'nb_repeat' : 1})
+        create_step({'round' : user2_workout1_round1, 'exercise' : pushups, 'nb_rep' : 10})
+        create_step({'round' : user2_workout1_round1, 'exercise' : lunges, 'nb_rep' : 15})
+        create_step({'round' : user2_workout1_round1, 'exercise' : lunges, 'nb_rep' : 15})
+        create_step({'round' : user2_workout1_round1, 'exercise' : situps, 'nb_rep' : 20})
         
         # 20 minutes AMRAP pattern            
         user2_workout2 = Workout.objects.create(name="Public Custom Workout 2", type=PUBLIC, creator=user2, amrap=20)
-        create_step({'workout' : user2_workout2, 'exercise' : burpees, 'nb_rep' : 15})
-        create_step({'workout' : user2_workout2, 'exercise' : situps, 'nb_rep' : 15})
-        create_step({'workout' : user2_workout2, 'exercise' : air_squats, 'nb_rep' : 15})
+        user2_workout2_round1 = create_round({'workout' : user2_workout2, 'nb_repeat' : 1})
+        create_step({'round' : user2_workout2_round1, 'exercise' : burpees, 'nb_rep' : 15})
+        create_step({'round' : user2_workout2_round1, 'exercise' : situps, 'nb_rep' : 15})
+        create_step({'round' : user2_workout2_round1, 'exercise' : air_squats, 'nb_rep' : 15})
 
         print("Done.")

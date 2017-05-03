@@ -91,13 +91,11 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'rest_auth.registration',
     'guardian',
-    'treebeard',
     
     # Wogether apps
     'permission',
     'user_account',
     'workout',
-    'workout_tree',
     'round',
     'exercise',
 ]
