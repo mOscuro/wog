@@ -4,9 +4,49 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from round.models import Step
-from round.serializers import CreateStepSerializer, StepSerializer
+from round.serializers import RoundSerializer, CreateStepSerializer, StepSerializer
+from workout import mixins as workout_mixins
+from workout.permissions import RoundObjectPermissions
+from workout.views import GenericWorkoutPermissionViewSet
 
 
+####################################################
+# ROUNDS
+####################################################
+class RoundInWorkoutViewSet(workout_mixins.ListNestedInWorkoutMixin,
+                               workout_mixins.RetrieveNestedInWorkoutMixin,
+                               workout_mixins.UpdateNestedInWorkoutMixinn,
+                               workout_mixins.DestroyNestedInWorkoutMixin,
+                               workout_mixins.CreateNestedInWorkoutMixin,
+                               GenericWorkoutPermissionViewSet):
+    """[API] Rounds - All operations."""
+    object_permission_class = RoundObjectPermissions
+    serializer_class = RoundUpdateSerializer
+    response_serializer_class = RoundSerializer
+
+    def get_serializer_class(self):
+        # 'Create' action has a specific serializer
+        if self.action == 'create':
+            return TaskListCreateSerializer
+        elif self.action in ['update', 'partial_update']:
+            return TaskListUpdateSerializer
+        return TaskListReadOnlySerializer
+
+    def get_queryset(self):
+        return TaskList.objects.filter(project=self.kwargs['project_pk']).order_by('position')
+
+    def perform_update(self, serializer):
+        tasklist = self.get_object()
+        self.check_specific_permissions(tasklist.project)
+        super().perform_update(serializer)
+
+    def perform_create(self, serializer):
+        return serializer.save()
+
+    def perform_destroy(self, instance):
+        if instance.default:
+            raise PermissionDenied(_('Default tasklist cannot be deleted'))
+        super().perform_destroy(instance)
 class StepDetailViewSet(mixins.RetrieveModelMixin,
                      mixins.DestroyModelMixin,
                      GenericViewSet):
