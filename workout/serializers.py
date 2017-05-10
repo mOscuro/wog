@@ -4,7 +4,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 # from exercise.serializers import ExerciseSerializer
-# from round.models import Round, Step
+from round.serializers import RoundSerializer
 from workout.models import Workout
 
 
@@ -13,13 +13,14 @@ class WorkoutDetailSerializer(serializers.ModelSerializer):
     Used as a homepage for the workout
     """
     creator = serializers.ReadOnlyField(source='creator.username')
-    
+    rounds = RoundSerializer(many=True)
+
+    def get_type(self, obj):
+        return obj.get_type_display()
+
     class Meta:
         model = Workout
-        fields = ('name', 'type', 'creator')
-
-    def get_type(self,obj):
-        return obj.get_type_display()
+        fields = ('name', 'type', 'creator', 'rounds')
 
 
 class WorkoutListSerializer(serializers.ModelSerializer):

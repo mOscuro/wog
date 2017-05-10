@@ -86,7 +86,7 @@ class Step(models.Model):
     - A Step is always linked to a Workout
     - A Step can be linked to a Round but not always
     """
-    round = models.ForeignKey('Round', related_name='round_steps')
+    round = models.ForeignKey('Round', related_name='steps')
     exercise = models.ForeignKey('exercise.Exercise', on_delete=models.CASCADE)
     nb_rep = models.IntegerField(default=1)
     distance = models.IntegerField(default=0)

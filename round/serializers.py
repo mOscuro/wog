@@ -24,10 +24,10 @@ class RoundSerializer(serializers.ModelSerializer):
     """
     A round is a container for steps.
     """
-    round_steps = StepSerializer(many=True)
+    steps = StepSerializer(many=True)
     class Meta:
         model = Round 
-        fields = ('nb_repeat', 'round_steps')
+        fields = ('nb_repeat', 'steps')
         
 ###########################################################
 # Actions related serializers

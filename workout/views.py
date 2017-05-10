@@ -1,7 +1,11 @@
 #from django.db.models import Q
 from rest_framework import mixins, filters, viewsets
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from permission.core import WorkoutObjectPermissions
+from round.models import Round, Step
+from round.serializers import StepSerializer
 from workout.constants import STAFF, PUBLIC
 from workout.models import Workout
 from workout.serializers import WorkoutListSerializer, WorkoutDetailSerializer, \
@@ -54,3 +58,27 @@ class WorkoutViewSet(mixins.CreateModelMixin,
         super(WorkoutViewSet, self).perform_destroy(serializer)
 
 
+class WorkoutDetailView(APIView):
+
+    def get(self, request, *args, **kwargs):
+
+        if 'workout_pk' in self.kwargs:
+            json_response = {'rounds' : []}
+            json_round = {}
+
+            rounds_query = Round.objects.filter(workout=self.kwargs['workout_pk']).order_by('position')
+
+            nb_round = 1
+            for round in rounds_query:
+
+                for i in range(0, round.nb_repeat):
+                    json_round['position'] = nb_round
+                    round_serializer = StepSerializer(round.steps, many=True)
+                    json_round['steps'] = round_serializer.data
+                    nb_round = nb_round + 1
+
+                    json_response['rounds'].append(json_round)
+                    print('------------')
+                    print(json_response)
+
+            return Response(json_response)

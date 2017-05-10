@@ -63,7 +63,7 @@ DEFAULT_FROM_EMAIL = 'no-reply@wogether.com'
 ROOT_URLCONF = 'wogether.urls'
 
 EXTERNAL_URLCONFS = (
-    (os.environ.get('FRONTEND_URL', 'http://127.0.0.1:8000'), 'wogether.urls_external'),
+    (os.environ.get('WOG_FRONTEND_URL', 'http://127.0.0.1:8000'), 'wogether.urls_external'),
 )
 
 # Login redirection rule

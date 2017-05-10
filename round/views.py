@@ -12,6 +12,7 @@ class StepDetailViewSet(mixins.RetrieveModelMixin,
                      GenericViewSet):
 
     queryset = Step.objects.all()
+    serializer_class = StepSerializer
     #object_permission_class = TaskInProjectObjectPermissions
     response_serializer_class = StepSerializer
 
