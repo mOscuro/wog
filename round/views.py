@@ -50,6 +50,7 @@ class StepsInWorkoutView(workout_mixins.ListNestedInWorkoutMixin,
                         GenericWorkoutPermissionViewSet):
 
     object_permission_class = RoundObjectPermissions
+    
     def list(self, request, *args, **kwargs):
 
         if 'workout_pk' in self.kwargs:
@@ -60,14 +61,14 @@ class StepsInWorkoutView(workout_mixins.ListNestedInWorkoutMixin,
             nb_round = 1
             for round in rounds_query:
                 # round can be repeated multiple times
-                print('==========')
-                print(round.steps)
                 for i in range(0, round.nb_repeat):
                     json_round = {}
                     json_round['position'] = nb_round
                     round_serializer = StepSerializer(round.steps, many=True)
                     json_round['steps'] = round_serializer.data
                     nb_round = nb_round + 1
+
+                    json_response['rounds'].append(json_round)
 
             return Response(json_response)
 

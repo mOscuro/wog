@@ -33,7 +33,7 @@ class RoundSerializer(serializers.ModelSerializer):
     steps = StepSerializer(many=True)
     class Meta:
         model = Round 
-        fields = ('nb_repeat', 'steps')
+        fields = ('id', 'nb_repeat', 'steps')
 
 
 ###########################################################
