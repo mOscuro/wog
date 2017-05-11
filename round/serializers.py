@@ -71,7 +71,7 @@ class RoundUpdateSerializer(serializers.ModelSerializer):
         return position
 
     def validate_nb_repeat(self, nb_repeat: str) -> str:
-        """Can not rename a TaskList to a name already used."""
+        """Nb_repeat must be greater than 0"""
         if nb_repeat < 1:
             raise ValidationError('nb_repeat must be greater than 0')
         return nb_repeat
