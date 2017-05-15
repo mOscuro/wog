@@ -5,6 +5,7 @@ from rest_framework.exceptions import ValidationError
 
 # from exercise.serializers import ExerciseSerializer
 from round.serializers import RoundSerializer
+from user_account.serializers import UserAccountSerializer
 from workout.models import Workout
 
 
@@ -20,7 +21,7 @@ class WorkoutDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Workout
-        fields = ('name', 'type', 'creator', 'rounds')
+        fields = ('id', 'name', 'type', 'creator', 'rounds')
 
 
 class WorkoutListSerializer(serializers.ModelSerializer):
@@ -36,12 +37,10 @@ class WorkoutCreateSerializer(serializers.ModelSerializer):
     Serializer for the class Project used when creating projects
     """
     name = serializers.CharField()
-    type = serializers.CharField(required=False)
-    type = serializers.SerializerMethodField(required=False)
-    creator = serializers.ReadOnlyField(source='creator.username', required=False)
-    
-    def get_type(self,obj):
-        return obj.get_type_display()
+    creator = serializers.SerializerMethodField(required=False)
+
+    def get_creator(self, obj):
+        return UserAccountSerializer(instance=obj.creator).data
 
     def validate(self, attrs):
         attrs['creator'] = self.context['request'].user
@@ -49,7 +48,8 @@ class WorkoutCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Workout
-        fields = ('name', 'type', 'creator')
+        fields = ('id', 'name', 'creator')
+        read_only_fields = ('id', 'creator')
 
 
 class WorkoutDetailUpdateSerializer(serializers.ModelSerializer):
