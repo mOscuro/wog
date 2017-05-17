@@ -89,7 +89,7 @@
                 "WaitOnNormalExit"
             ]
         },
-        {
+{
             "name": "Django",
             "type": "python",
             "request": "launch",
@@ -98,7 +98,9 @@
             "program": "${workspaceRoot}/manage.py",
             "cwd": "${workspaceRoot}",
             "args": [
-                "runworker"
+                "runserver",
+                "0.0.0.0:8000",
+                "--noreload"
             ],
             "env": null,
             "envFile": "${workspaceRoot}/.env",
