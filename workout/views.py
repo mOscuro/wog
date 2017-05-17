@@ -47,12 +47,6 @@ class WorkoutViewSet(mixins.CreateModelMixin,
             return Workout.objects.filter(type=STAFF)
         else:
             return viewsets.GenericViewSet.get_queryset(self) 
-    
-    def perform_create(self, serializer):
-        super(WorkoutViewSet, self).perform_create(serializer)
-
-    def perform_update(self, serializer):
-        super(WorkoutViewSet, self).perform_update(serializer)
 
     def perform_destroy(self, serializer):
         # TODO: need to remove permissions to everyone on that project in order to trigger websocket

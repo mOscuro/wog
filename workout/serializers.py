@@ -28,23 +28,21 @@ class WorkoutListSerializer(serializers.ModelSerializer):
     """
     Used to display a synthetic list of workouts
     """
+    creator = UserAccountSerializer()
     class Meta:
         model = Workout
-        fields = ('id', 'name')
+        fields = ('id', 'name', 'creator')
 
 class WorkoutCreateSerializer(serializers.ModelSerializer):
     """
     Serializer for the class Project used when creating projects
     """
     name = serializers.CharField()
-    creator = serializers.SerializerMethodField(required=False)
-
-    def get_creator(self, obj):
-        return UserAccountSerializer(instance=obj.creator).data
+    creator = UserAccountSerializer(required=False)
 
     def validate(self, attrs):
         attrs['creator'] = self.context['request'].user
-        return serializers.ModelSerializer.validate(self, attrs)
+        return attrs
 
     class Meta:
         model = Workout
