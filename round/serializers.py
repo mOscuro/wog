@@ -136,8 +136,7 @@ class RoundCreateSerializer(serializers.ModelSerializer):
         shift_rounds_right(self.validated_data['workout'], position)
         return Round.objects.create(workout=self.validated_data['workout'],
                                        nb_repeat=nb_repeat,
-                                       position=position,
-                                       default=False)
+                                       position=position)
 ###########################################################
 # Actions related serializers
 ###########################################################

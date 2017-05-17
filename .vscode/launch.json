@@ -120,7 +120,7 @@
             "program": "${workspaceRoot}/manage.py",
             "cwd": "${workspaceRoot}",
             "args": [
-                "test"
+                "runserver"
             ],
             "env": null,
             "envFile": "${workspaceRoot}/.env",

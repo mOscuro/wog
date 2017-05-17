@@ -35,7 +35,7 @@ class WorkoutViewSet(mixins.CreateModelMixin,
             return WorkoutCreateSerializer
         else:  # there should be only 'list' action
             return WorkoutListSerializer
-    
+
     def get_queryset(self):
         # Checking Query Parameter in URL
         workout_type = self.request.query_params.get('type', None)
