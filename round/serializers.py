@@ -141,7 +141,7 @@ class RoundCreateSerializer(serializers.ModelSerializer):
 # Actions related serializers
 ###########################################################
 
-class CreateStepSerializer(serializers.Serializer):
+class StepCreateSerializer(serializers.Serializer):
     exercise = serializers.IntegerField(required=True)
     nb_rep = serializers.IntegerField(required=True)
     round = serializers.IntegerField(required=False)
