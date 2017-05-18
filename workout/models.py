@@ -10,6 +10,7 @@ class Workout(models.Model):
     name = models.CharField(max_length=100)
     type = models.IntegerField(choices=Workout_Type, default=PRIVATE)
     creator = models.ForeignKey(AUTH_USER_MODEL, related_name='workouts')
+    time_cap = models.IntegerField(default=0)
     amrap = models.IntegerField(default=0)
     emom = models.IntegerField(default=0)
     description = models.TextField(blank=True)
@@ -18,17 +19,17 @@ class Workout(models.Model):
     
     def __str__(self):
         return self.name
+
+    def is_for_time(self):
+        """ Workout type : Every minute on the minute for a specified number of minutes """
+        return self.time_cap > 0
     
     def is_amrap(self):
-        """
-        * Workout type : As Many Reps As Possible in the given time
-        """
+        """ Workout type : As Many Reps As Possible in the given time """
         return self.amrap > 0
 
     def is_emom(self):
-        """
-        * Workout type : Every minute on the minute for a specified number of minutes
-        """
+        """ Workout type : Every minute on the minute for a specified number of minutes """
         return self.emom > 0
     
     class Meta:

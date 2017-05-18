@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied, ValidationError
 
@@ -14,7 +15,7 @@ def get_pk(context, name):
 ###########################################################
 # WORKOUT related serializers
 ###########################################################
-class StepSerializer(serializers.ModelSerializer):
+class StepReadOnlySerializer(serializers.ModelSerializer):
     """
     Retrieve the detailed informations of a step (using Exercise detail).
     Used to build the detailed of a Round model instance.
@@ -30,7 +31,7 @@ class RoundSerializer(serializers.ModelSerializer):
     """
     A round is a container for steps.
     """
-    steps = StepSerializer(many=True)
+    steps = StepReadOnlySerializer(many=True)
     class Meta:
         model = Round 
         fields = ('id', 'nb_repeat', 'steps')
@@ -142,36 +143,34 @@ class RoundCreateSerializer(serializers.ModelSerializer):
 ###########################################################
 
 class StepCreateSerializer(serializers.Serializer):
-    exercise = serializers.IntegerField(required=True)
+    exercise_pk = serializers.IntegerField(required=True)
     nb_rep = serializers.IntegerField(required=True)
     round = serializers.IntegerField(required=False)
+    weight = serializers.IntegerField(required=False)
 
     def validate(self, attrs):
-        round_id = attrs.get('round', None)
-        if round_id is None:
-            raise ValidationError(_('You need to specify a round'))
-        else:
-            try:
-                attrs['round'] = Round.objects.get(id=round_id)
-            except Round.DoesNotExist:
-                raise ValidationError(_('Incorrect round'))
+        workout = Workout.objects.get(id=get_pk(self.context, 'workout'))
+        try:
+            attrs['round'] = Round.objects.get(id=get_pk(self.context, 'round'))
+        except Round.DoesNotExist:
+            raise ValidationError(_('Incorrect round'))
 
         # Check whether user has permission to view related workout
-        if not self.context['request'].user.has_perm('workout.view_workout', attrs['workout']):
+        if not self.context['request'].user.has_perm('workout.view_workout', workout):
             raise ValidationError(_('Incorrect'))
 
         # Check whether user has permission to create a task within this workout
-        if not self.context['request'].user.has_perm('workout.add_workout_steps', attrs['workout']):
+        if not self.context['request'].user.has_perm('workout.add_workout_step', workout):
             raise PermissionDenied()
 
-        exercise_id = attrs.get('exercise', None)
+        exercise_pk = attrs.get('exercise_pk', None)
         try:
-            attrs['exercise'] = Exercise.objects.get(id=exercise_id)
+            attrs['exercise'] = Exercise.objects.get(id=exercise_pk)
         except Exercise.DoesNotExist:
             raise ValidationError(_('Incorrect exercise'))
         
-        attrs['nb_rep'] = attrs.get('nb_rep', None)
-        attrs['weight'] = attrs.get('weight', None)
+        attrs['nb_rep'] = attrs.get('nb_rep', 1)
+        attrs['weight'] = attrs.get('weight', 0)
         
         return attrs
 

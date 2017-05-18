@@ -34,7 +34,8 @@ def create_step(params):
     return Step.objects.create(round=round,
                                exercise=exercise,
                                nb_rep=params.get('nb_rep', 1),
-                               distance=params.get('distance', 1))
+                               distance=params.get('distance', 0),
+                               weight=params.get('weight', 0))
 
 
 def insert_task_in_todo(*args, **kwargs):

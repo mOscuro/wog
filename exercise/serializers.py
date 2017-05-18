@@ -11,7 +11,7 @@ class ExerciseSerializer(serializers.ModelSerializer):
         
     class Meta:
         model = Exercise
-        fields = ('id', 'name', 'level', 'equipement', 'type', 'muscles')
+        fields = ('id', 'name', 'level', 'equipment', 'type', 'muscles')
     
     def get_level(self, obj):
         return obj.get_level_display()

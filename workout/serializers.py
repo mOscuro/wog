@@ -24,21 +24,23 @@ class WorkoutDetailSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'type', 'creator', 'rounds')
 
 
-class WorkoutListSerializer(serializers.ModelSerializer):
+class WorkoutReadOnlySerializer(serializers.ModelSerializer):
     """
     Used to display a synthetic list of workouts
     """
     creator = UserAccountSerializer()
+    
     class Meta:
         model = Workout
         fields = ('id', 'name', 'creator')
+        read_only_fields = ('id', 'name', 'creator')
+
 
 class WorkoutCreateSerializer(serializers.ModelSerializer):
     """
     Serializer for the class Project used when creating projects
     """
     name = serializers.CharField()
-    creator = UserAccountSerializer(required=False)
 
     def validate(self, attrs):
         attrs['creator'] = self.context['request'].user
@@ -46,11 +48,10 @@ class WorkoutCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Workout
-        fields = ('id', 'name', 'creator')
-        read_only_fields = ('id', 'creator')
+        fields = ('name',)
 
 
-class WorkoutDetailUpdateSerializer(serializers.ModelSerializer):
+class WorkoutUpdateSerializer(serializers.ModelSerializer):
     """
     Used to edit infos of a workout (name, visibility, time_cap....)
     """

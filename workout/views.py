@@ -1,16 +1,16 @@
 #from django.db.models import Q
-from rest_framework import mixins, filters, viewsets
+from rest_framework import mixins, filters, viewsets, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from permission.core import WorkoutObjectPermissions
 from round.models import Round, Step
-from round.serializers import StepSerializer
+from round.serializers import StepReadOnlySerializer
 from workout.constants import STAFF, PUBLIC
 from workout.models import Workout
-from workout.serializers import WorkoutListSerializer, WorkoutDetailSerializer, \
-WorkoutCreateSerializer, WorkoutDetailUpdateSerializer
+from workout.serializers import WorkoutReadOnlySerializer, WorkoutDetailSerializer, \
+WorkoutCreateSerializer, WorkoutUpdateSerializer
 
 
 class WorkoutViewSet(mixins.CreateModelMixin,
@@ -30,11 +30,11 @@ class WorkoutViewSet(mixins.CreateModelMixin,
         if self.action in ['retrieve', 'destroy']:
             return WorkoutDetailSerializer
         elif self.action in ['update', 'partial_update']:
-            return WorkoutDetailUpdateSerializer
+            return WorkoutUpdateSerializer
         elif self.action == 'create':
             return WorkoutCreateSerializer
         else:  # there should be only 'list' action
-            return WorkoutListSerializer
+            return WorkoutReadOnlySerializer
 
     def get_queryset(self):
         # Checking Query Parameter in URL
@@ -48,6 +48,26 @@ class WorkoutViewSet(mixins.CreateModelMixin,
         else:
             return viewsets.GenericViewSet.get_queryset(self) 
 
+    def create(self, request, *args, **kwargs):
+        # We override create method to use a custom serializer for the response
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        # create the object (instead of preform_create method)
+        saved = serializer.save()
+        serializer = WorkoutReadOnlySerializer(instance=saved)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def update(self, request, *args, **kwargs):
+        # We override update method to use a custom serializer for the response
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        serializer = WorkoutReadOnlySerializer(instance=instance)
+        return Response(serializer.data)
+    
     def perform_destroy(self, serializer):
         # TODO: need to remove permissions to everyone on that project in order to trigger websocket
         super(WorkoutViewSet, self).perform_destroy(serializer)
@@ -68,7 +88,7 @@ class WorkoutDetailView(APIView):
                 for i in range(0, round.nb_repeat):
                     json_round = {}
                     json_round['position'] = nb_round
-                    round_serializer = StepSerializer(round.steps, many=True)
+                    round_serializer = StepReadOnlySerializer(round.steps, many=True)
                     json_round['steps'] = round_serializer.data
                     nb_round = nb_round + 1
 

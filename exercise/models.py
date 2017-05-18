@@ -33,7 +33,7 @@ class Exercise(models.Model):
     """
     
     name = models.CharField(max_length=50)
-    equipement = models.ForeignKey(Equipment, blank=True, null=True)
+    equipment = models.ForeignKey(Equipment, blank=True, null=True)
     level = models.IntegerField(choices=Exercise_Level, default=MEDIUM)
     type = models.IntegerField(choices=Exercise_Type, default=BODYWEIGHT)
     muscles = models.ManyToManyField(Muscle, blank=True)
