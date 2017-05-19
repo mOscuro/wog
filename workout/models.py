@@ -1,65 +1,51 @@
+from django.utils.translation import ugettext_lazy as _
 from django.db import models
-from treebeard.mp_tree import MP_Node, MP_NodeManager
 
 from wogether.settings import AUTH_USER_MODEL
 from workout.constants import Workout_Type, PRIVATE
 
 
-class WorkoutTree(MP_Node):
-    node_order_by = None
-
-
-class WorkoutManager(MP_NodeManager):
-    def create(self, *args, **kwargs):
-        new_workout = Workout.add_root(*args, **kwargs)
-        return new_workout
-
-class Workout(WorkoutTree):
+class Workout(models.Model):
    
     name = models.CharField(max_length=100)
     type = models.IntegerField(choices=Workout_Type, default=PRIVATE)
     creator = models.ForeignKey(AUTH_USER_MODEL, related_name='workouts')
+    time_cap = models.IntegerField(default=0)
     amrap = models.IntegerField(default=0)
     emom = models.IntegerField(default=0)
     description = models.TextField(blank=True)
     
     is_active = models.BooleanField(default=True)
     
-    objects = WorkoutManager()
-
     def __str__(self):
         return self.name
+
+    def is_for_time(self):
+        """ Workout type : Every minute on the minute for a specified number of minutes """
+        return self.time_cap > 0
     
     def is_amrap(self):
-        """
-        * Workout type : As Many Reps As Possible in the given time
-        """
+        """ Workout type : As Many Reps As Possible in the given time """
         return self.amrap > 0
 
     def is_emom(self):
-        """
-        * Workout type : Every minute on the minute for a specified number of minutes
-        """
+        """ Workout type : Every minute on the minute for a specified number of minutes """
         return self.emom > 0
-    
-    def has_tree_problems(self):
-        problems = self.find_problems()
-        return (sum([len(problems[i]) for i in range(len(problems))]) != 0)
     
     class Meta:
         unique_together = (('creator', 'name'),)
         permissions = (
             ('view_workout', 'Can view the Workout'),
             
-            ('view_workout_step', 'View create a step on a Workout'),
-            ('add_workout_step', 'Can create a step on a Workout'),
-            ('change_workout_step', 'Can update a step on a Workout'),
-            ('delete_workout_step', 'Can delete a step on a Workout'),
-            
             ('view_workout_round', 'View create a round on a Workout'),
             ('add_workout_round', 'Can create a round on a Workout'),
             ('change_workout_round', 'Can update a round on a Workout'),
             ('delete_workout_round', 'Can delete a round on a Workout'),
+
+            ('view_workout_step', 'View create a step on a Workout'),
+            ('add_workout_step', 'Can create a step on a Workout'),
+            ('change_workout_step', 'Can update a step on a Workout'),
+            ('delete_workout_step', 'Can delete a step on a Workout'),
         )
 
     

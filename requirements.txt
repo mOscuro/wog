@@ -5,6 +5,5 @@ django-allauth>=0.25.2,<0.26
 django-nested-admin==3.0.10
 django-rest-auth==0.7.0
 django-guardian==1.4.6
-django-treebeard==4.1.0
 django-filter==1.0.1
 Pillow==4.0.0

@@ -6,8 +6,8 @@
 from allauth.account.models import EmailAddress
 from django.core.management.base import BaseCommand
 
-from exercise.exercise_constants import AMATEUR, MEDIUM, BODYWEIGHT
-from exercise.models import Exercise
+from exercise.exercise_constants import AMATEUR, MEDIUM, BODYWEIGHT, CROSSTRAINING
+from exercise.models import Exercise, Equipment
 from round.helpers import create_round, create_step
 from user_account.models import User
 from workout.models import Workout
@@ -51,9 +51,17 @@ class Command(BaseCommand):
         admin_user = User.objects.get(email="root@root.com")
 
         #=======================================================================
+        # CREATE SOME EQUIPMENTS
+        #=======================================================================
+        print("Creating some equiments...")
+        barbell = Equipment.objects.create(name="Barbell")
+        dumbell = Equipment.objects.create(name="Dumbell")
+        jumprope = Equipment.objects.create(name="Jump Rope")
+
+        #=======================================================================
         # CREATE SOME EXERCISES
         #=======================================================================
-        print("Creating some exercise...")
+        print("Creating some exercises...")
         burpees = Exercise.objects.create(name="Burpees", level=AMATEUR, type=BODYWEIGHT)
         air_squats = Exercise.objects.create(name="Air Squats", level=AMATEUR, type=BODYWEIGHT)
         lunges = Exercise.objects.create(name="Lunges", level=AMATEUR, type=BODYWEIGHT)
@@ -65,7 +73,11 @@ class Command(BaseCommand):
         pushups = Exercise.objects.create(name="Pushups", level=AMATEUR, type=BODYWEIGHT)
         pullups = Exercise.objects.create(name="Pullups", level=MEDIUM, type=BODYWEIGHT)
         running = Exercise.objects.create(name="Running", level=AMATEUR, type=BODYWEIGHT)
-        
+
+        double_unders = Exercise.objects.create(name="Double Unders", level=MEDIUM, type=CROSSTRAINING, equipment=jumprope)
+        dumbell_deadlift = Exercise.objects.create(name="Dumbell Deadlift", level=MEDIUM, type=CROSSTRAINING, equipment=dumbell)
+        dumbell_front_squat = Exercise.objects.create(name="Dumbell Front Squat", level=MEDIUM, type=CROSSTRAINING, equipment=dumbell)
+
         #=======================================================================
         # ADMINISTRATORS WORKOUTS
         #=======================================================================
@@ -140,12 +152,14 @@ class Command(BaseCommand):
         
         user1_workout3 = Workout.objects.create(name="Public Custom Workout 2", type=PUBLIC, creator=user1)
         # Mixing Steps and Rounds pattern
-        create_step({'workout' : user1_workout3, 'exercise' : running, 'nb_rep' : 1, 'distance' : '1000'})
+        user1_workout3_round1 = create_round({'workout' : user1_workout3, 'nb_repeat' : 1})
+        create_step({'round' : user1_workout3_round1, 'exercise' : running, 'nb_rep' : 1, 'distance' : '1000'})
         user1_workout3_5rounds = create_round({'workout' : user1_workout3, 'nb_repeat' : 5})
         create_step({'round' : user1_workout3_5rounds, 'exercise' : pullups, 'nb_rep' : 20})
         create_step({'round' : user1_workout3_5rounds, 'exercise' : pushups, 'nb_rep' : 40})
         create_step({'round' : user1_workout3_5rounds, 'exercise' : air_squats, 'nb_rep' : 60})
-        create_step({'workout' : user1_workout3, 'exercise' : running, 'nb_rep' : 1, 'distance' : '1000'})
+        user1_workout3_round7 = create_round({'workout' : user1_workout3, 'nb_repeat' : 1})
+        create_step({'round' : user1_workout3_round7, 'exercise' : running, 'nb_rep' : 1, 'distance' : '1000'})
  
         #=======================================================================
         # USER 2 WORKOUTS
@@ -153,15 +167,17 @@ class Command(BaseCommand):
         user2 = User.objects.get(email="user2@wogether.com")
         # 10 minutes AMRAP pattern
         user2_workout1 = Workout.objects.create(name="Private Custom Workout 2", type=PRIVATE, creator=user2, amrap=10)
-        create_step({'workout' : user2_workout1, 'exercise' : lunges, 'nb_rep' : 15})
-        create_step({'workout' : user2_workout1, 'exercise' : pushups, 'nb_rep' : 10})
-        create_step({'workout' : user2_workout1, 'exercise' : lunges, 'nb_rep' : 15})
-        create_step({'workout' : user2_workout1, 'exercise' : situps, 'nb_rep' : 20})
+        user2_workout1_round1 = create_round({'workout' : user2_workout1, 'nb_repeat' : 1})
+        create_step({'round' : user2_workout1_round1, 'exercise' : pushups, 'nb_rep' : 10})
+        create_step({'round' : user2_workout1_round1, 'exercise' : lunges, 'nb_rep' : 15})
+        create_step({'round' : user2_workout1_round1, 'exercise' : lunges, 'nb_rep' : 15})
+        create_step({'round' : user2_workout1_round1, 'exercise' : situps, 'nb_rep' : 20})
         
         # 20 minutes AMRAP pattern            
         user2_workout2 = Workout.objects.create(name="Public Custom Workout 2", type=PUBLIC, creator=user2, amrap=20)
-        create_step({'workout' : user2_workout2, 'exercise' : burpees, 'nb_rep' : 15})
-        create_step({'workout' : user2_workout2, 'exercise' : situps, 'nb_rep' : 15})
-        create_step({'workout' : user2_workout2, 'exercise' : air_squats, 'nb_rep' : 15})
+        user2_workout2_round1 = create_round({'workout' : user2_workout2, 'nb_repeat' : 1})
+        create_step({'round' : user2_workout2_round1, 'exercise' : burpees, 'nb_rep' : 15})
+        create_step({'round' : user2_workout2_round1, 'exercise' : situps, 'nb_rep' : 15})
+        create_step({'round' : user2_workout2_round1, 'exercise' : air_squats, 'nb_rep' : 15})
 
         print("Done.")

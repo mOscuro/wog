@@ -11,7 +11,7 @@ def create_round(params):
     else:
         raise AttributeError(_('missing parameters [workout]'))
 
-    return Round.objects.create(_workout=workout,
+    return Round.objects.create(workout=workout,
                                nb_repeat=params.get('nb_repeat', 1))
 
 def create_step(params):
@@ -22,18 +22,20 @@ def create_step(params):
     * round
     * workout
     """
-    if params.get('round', None) is not None:
-        workout = params.get('round').get_workout()
-    elif params.get('workout', None) is not None:
-        workout = params.get('workout')
+    if params.get('exercise', None) is not None:
+        exercise = params.get('exercise')
     else:
-        raise AttributeError(_('missing parameters [workout or round]'))
+        raise AttributeError(_('missing parameter [exercise]'))
+    if params.get('round', None) is not None:
+        round = params.get('round')
+    else:
+        raise AttributeError(_('missing parameter [round]'))
 
-    return Step.objects.create(_workout=workout,
-                               _round=params.get('round', None),
-                               exercise=params.get('exercise', None),
+    return Step.objects.create(round=round,
+                               exercise=exercise,
                                nb_rep=params.get('nb_rep', 1),
-                               distance=params.get('distance', 1))
+                               distance=params.get('distance', 0),
+                               weight=params.get('weight', 0))
 
 
 def insert_task_in_todo(*args, **kwargs):
