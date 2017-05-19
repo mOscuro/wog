@@ -1,12 +1,11 @@
 from rest_framework import status, mixins
-from rest_framework.generics import CreateAPIView
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
-from rest_framework.views import APIView
 
 from round.models import Round, Step
 from round.serializers import RoundSerializer, RoundCreateSerializer, RoundUpdateSerializer, \
-StepCreateSerializer, StepReadOnlySerializer
+StepReadOnlySerializer, StepCreateSerializer, StepUpdateSerializer
 from workout import mixins as workout_mixins
 from workout.permissions import RoundObjectPermissions, StepObjectPermissions
 from workout.views import GenericWorkoutPermissionViewSet
@@ -46,34 +45,48 @@ class RoundInWorkoutViewSet(workout_mixins.ListNestedInWorkoutMixin,
         return serializer.save()
 
 
-class StepsInWorkoutView(workout_mixins.ListNestedInWorkoutMixin,
-                        GenericWorkoutPermissionViewSet):
-
+####################################################
+# STEPS
+####################################################
+class StepsInWorkoutView(APIView):
+    """
+    This special view shows all the steps of a workout.
+    It takes account of number times a round can be repeated.
+    """
+    
     object_permission_class = RoundObjectPermissions
     
-    def list(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
 
         if 'workout_pk' in self.kwargs:
-            json_response = {'rounds' : []}
+            json_response = {'steps' : []}
             # get rounds for the workout
             rounds_query = Round.objects.filter(workout=self.kwargs['workout_pk']).order_by('position')
 
             nb_round = 1
+            nb_step = 1
             for round in rounds_query:
                 # round can be repeated multiple times
                 for i in range(0, round.nb_repeat):
-                    json_round = {}
-                    json_round['position'] = nb_round
-                    round_serializer = StepReadOnlySerializer(round.steps, many=True)
-                    json_round['steps'] = round_serializer.data
-                    nb_round = nb_round + 1
 
-                    json_response['rounds'].append(json_round)
+                    # Loop through each step of each rounds
+                    for step in round.steps.all():
+                        json_step = {}
+                        json_step['round_position'] = nb_round
+                        json_step['step_position'] = nb_step
+                        step_serializer = StepReadOnlySerializer(instance=step)
+                        json_step['step'] = step_serializer.data
+                                                
+                        json_response['steps'].append(json_step)
+                        nb_step = nb_step + 1
+
+                    # For next round
+                    nb_round = nb_round + 1
 
             return Response(json_response)
 
 
-class StepInWorkoutViewSet(workout_mixins.ListNestedInWorkoutMixin,
+class StepInRoundViewSet(workout_mixins.ListNestedInWorkoutMixin,
                            workout_mixins.RetrieveNestedInWorkoutMixin,
                            workout_mixins.UpdateNestedInWorkoutMixin,
                            workout_mixins.DestroyNestedInWorkoutMixin,
@@ -84,8 +97,7 @@ class StepInWorkoutViewSet(workout_mixins.ListNestedInWorkoutMixin,
 
     def get_serializer_class(self):
         if self.action in ['update', 'partial_update']:
-            pass
-            #return StepUpdateSerializer
+            return StepUpdateSerializer
         elif self.action == 'create':
             return StepCreateSerializer
         return StepReadOnlySerializer

@@ -90,17 +90,14 @@ class Step(models.Model):
     round = models.ForeignKey('Round', related_name='steps')
     exercise = models.ForeignKey('exercise.Exercise', on_delete=models.CASCADE)
     nb_rep = models.IntegerField(default=1)
-    distance = models.IntegerField(default=0)
-    weight = models.FloatField(default=0)
+    distance = models.IntegerField(default=0) # TODO : Have to manage Kms and meters
+    weight = models.FloatField(default=0) # TODO : Have to manage Kgs and Lbs
     rest_time = models.IntegerField(default=0)
     position = models.PositiveSmallIntegerField(default=0, blank=True)
-    
-    #class Meta:
-        #unique_together = ('workout', 'numero')
+    # TODO : add attribute for time
     
     def __str__(self):
         return str(self.nb_rep) + " " + self.exercise.name
-
 
     def move(self, to_position: int) -> None:
         """Move a Step to another position within its Round."""
