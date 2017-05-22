@@ -3,7 +3,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework_nested import routers
 
 from user_account.views import UserAccountViewSet
-from workout.views import WorkoutViewSet, WorkoutDetailView
+from workout.views import WorkoutViewSet
 from exercise.views import ExerciseViewSet, EquipmentViewSet
 from round.views import RoundInWorkoutViewSet, StepsInWorkoutView, StepInRoundViewSet
 
