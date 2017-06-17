@@ -84,23 +84,25 @@ class Step(models.Model):
     - Exemples :
         -- 15 pullups
         -- 10 bench press @ 15Kg
-    - A Step is always linked to a Workout
-    - A Step can be linked to a Round but not always
+    - A Step is always linked to a Round
+    - A Step must always be linked to an Exercise
     """
     round = models.ForeignKey('Round', related_name='steps')
     exercise = models.ForeignKey('exercise.Exercise', on_delete=models.CASCADE)
     nb_rep = models.IntegerField(default=1)
-    distance = models.IntegerField(default=0) # TODO : Have to manage Kms and meters
-    weight = models.FloatField(default=0) # TODO : Have to manage Kgs and Lbs
+    distance = models.IntegerField(default=0) # TODO : Have to manage Kms AND meters
+    weight = models.FloatField(default=0) # TODO : Have to manage Kgs AND Lbs
     rest_time = models.IntegerField(default=0)
     position = models.PositiveSmallIntegerField(default=0, blank=True)
-    # TODO : add attribute for time
+    # TODO : add attribute for time (for example : Hold plank 60 sec)
     
     def __str__(self):
         return str(self.nb_rep) + " " + self.exercise.name
 
     def move(self, to_position: int) -> None:
-        """Move a Step to another position within its Round."""
+        """
+        Move a Step to another position within its Round.
+        """
         if to_position < 0:
             raise ValueError('position cannot be negative')
         if self.position == to_position:
@@ -154,7 +156,9 @@ class Step(models.Model):
         self.save()
 
     def delete(self, *args, **kwargs):
-        """Deletes a step."""
+        """
+        Deletes a step.
+        """
         # Shift Steps up in the Round
         shift_steps_up(round=self.round, from_position=self.position + 1)
 

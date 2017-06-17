@@ -73,28 +73,6 @@ class WorkoutViewSet(mixins.CreateModelMixin,
         super(WorkoutViewSet, self).perform_destroy(serializer)
 
 
-class WorkoutDetailView(APIView):
-
-    def get(self, request, *args, **kwargs):
-
-        if 'workout_pk' in self.kwargs:
-            json_response = {'rounds' : []}
-            # get rounds for the workout
-            rounds_query = Round.objects.filter(workout=self.kwargs['workout_pk']).order_by('position')
-
-            nb_round = 1
-            for round in rounds_query:
-                # round can be repeated multiple times
-                for i in range(0, round.nb_repeat):
-                    json_round = {}
-                    json_round['position'] = nb_round
-                    round_serializer = StepReadOnlySerializer(round.steps, many=True)
-                    json_round['steps'] = round_serializer.data
-                    nb_round = nb_round + 1
-
-            return Response(json_response)
-
-
 ####################################################
 # GENERIC 'IN WORKOUT' VIEWSETS
 ####################################################

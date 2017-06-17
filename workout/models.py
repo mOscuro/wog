@@ -60,7 +60,8 @@ class Session(models.Model):
     creator = models.ForeignKey(AUTH_USER_MODEL, related_name='sessions')
     date = models.DateTimeField()
     users = models.ManyToManyField(AUTH_USER_MODEL, related_name='athletes')
-    
+
+
 class Progression(models.Model):
     """
     - The Progression follows where an athlete is at, during a workout
