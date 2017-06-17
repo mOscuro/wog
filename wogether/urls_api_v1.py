@@ -2,10 +2,10 @@ from django.conf.urls import url, include
 from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework_nested import routers
 
-from user_account.views import UserAccountViewSet
-from workout.views import WorkoutViewSet
-from exercise.views import ExerciseViewSet, EquipmentViewSet
-from round.views import RoundInWorkoutViewSet, StepsInWorkoutView, StepInRoundViewSet
+from wog_user.views import UserAccountViewSet
+from wog_workout.views import WorkoutViewSet
+from wog_exercise.views import ExerciseViewSet, EquipmentViewSet
+from wog_round.views import RoundInWorkoutViewSet, StepsInWorkoutView, StepInRoundViewSet
 
 
 router = routers.DefaultRouter()

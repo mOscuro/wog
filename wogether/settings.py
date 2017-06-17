@@ -93,11 +93,11 @@ INSTALLED_APPS = [
     'guardian',
     
     # Wogether apps
-    'permission',
-    'user_account',
-    'workout',
-    'round',
-    'exercise',
+    'wog_permission',
+    'wog_user',
+    'wog_workout',
+    'wog_round',
+    'wog_exercise',
 ]
 
 MIDDLEWARE = [
@@ -171,7 +171,7 @@ AUTHENTICATION_BACKENDS = (
     'guardian.backends.ObjectPermissionBackend',
 )
 
-AUTH_USER_MODEL = 'user_account.User'
+AUTH_USER_MODEL = 'wog_user.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
