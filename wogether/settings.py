@@ -17,6 +17,7 @@ from wogether.app_settings.allauth import *  # @UnusedWildImport
 from wogether.app_settings.guardian import *  # @UnusedWildImport
 from wogether.app_settings.rest import *  # @UnusedWildImport
 from wogether.app_settings.restauth import *  # @UnusedWildImport
+from wogether.app_settings.swagger import *  # @UnusedWildImport
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -90,9 +91,11 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'rest_auth.registration',
+    'rest_framework_swagger',
     'guardian',
     
     # Wogether apps
+    'wog',
     'wog_permission',
     'wog_user',
     'wog_workout',

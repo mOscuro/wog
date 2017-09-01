@@ -3,46 +3,30 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
+from wog.mixins import ListMixin, RetrieveMixin, CreateMixin, UpdateMixin, DestroyMixin
 from wog_round.models import Round, Step
 from wog_round.serializers import RoundSerializer, RoundCreateSerializer, RoundUpdateSerializer, \
 StepReadOnlySerializer, StepCreateSerializer, StepUpdateSerializer
 from wog_workout import mixins as workout_mixins
 from wog_workout.permissions import RoundObjectPermissions, StepObjectPermissions
-from wog_workout.views import GenericWorkoutPermissionViewSet
+from wog_workout.views import GenericWorkoutPermissionViewSet, NestedInWorkoutViewSet
 
 
 ####################################################
 # ROUNDS
 ####################################################
-class RoundInWorkoutViewSet(workout_mixins.ListNestedInWorkoutMixin,
-                               workout_mixins.RetrieveNestedInWorkoutMixin,
-                               workout_mixins.UpdateNestedInWorkoutMixin,
-                               workout_mixins.DestroyNestedInWorkoutMixin,
-                               workout_mixins.CreateNestedInWorkoutMixin,
-                               GenericWorkoutPermissionViewSet):
+class RoundInWorkoutViewSet(ListMixin, RetrieveMixin,
+                            UpdateMixin, DestroyMixin,
+                            CreateMixin, NestedInWorkoutViewSet):
+    
     """[API] Rounds - All operations."""
-    object_permission_class = RoundObjectPermissions
-    serializer_class = RoundUpdateSerializer
+    queryset = Round.objects.all()
     response_serializer_class = RoundSerializer
-
-    def get_serializer_class(self):
-        # 'Create' action has a specific serializer
-        if self.action == 'create':
-            return RoundCreateSerializer
-        elif self.action in ['update', 'partial_update']:
-            return RoundUpdateSerializer
-        return RoundSerializer
+    update_serializer_class = RoundUpdateSerializer
+    create_serializer_class = RoundCreateSerializer
 
     def get_queryset(self):
-        return Round.objects.filter(workout=self.kwargs['workout_pk']).order_by('position')
-
-    def perform_update(self, serializer):
-        round = self.get_object()
-        self.check_specific_permissions(round.workout)
-        super().perform_update(serializer)
-
-    def perform_create(self, serializer):
-        return serializer.save()
+        return self.filter_on_workout(self.queryset).order_by('position')
 
 
 ####################################################

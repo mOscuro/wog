@@ -81,5 +81,5 @@ class WorkoutUpdateSerializer(serializers.ModelSerializer):
                 
     class Meta:
         model = Workout
-        fields = ('id', 'name', 'type')    
+        fields = ('id', 'name', 'type', 'visibility')    
 

@@ -33,14 +33,6 @@ def create_workout_permissions(sender, instance, **kwargs):
         assign_perm('workout.change_workout', creator, instance)
         assign_perm('workout.delete_workout', creator, instance)
         
-        assign_perm('workout.add_workout_round', creator, instance)
-        assign_perm('workout.change_workout_round', creator, instance)
-        assign_perm('workout.delete_workout_round', creator, instance)
-
-        assign_perm('workout.add_workout_step', creator, instance)
-        assign_perm('workout.change_workout_step', creator, instance)
-        assign_perm('workout.delete_workout_step', creator, instance)
-
         if instance.type==PUBLIC:
             auth_group = Group.objects.get(name=AUTHENTICATED_USER_GROUP)
             assign_perm('workout.view_workout', auth_group, instance)

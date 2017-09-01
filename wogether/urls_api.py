@@ -6,7 +6,8 @@ from wog_user.views import UserAccountViewSet
 from wog_workout.views import WorkoutViewSet
 from wog_exercise.views import ExerciseViewSet, EquipmentViewSet
 from wog_round.views import RoundInWorkoutViewSet, StepsInWorkoutView, StepInRoundViewSet
-
+from rest_framework_swagger.views import get_swagger_view
+    
 
 router = routers.DefaultRouter()
 router.register(r'users', UserAccountViewSet)
@@ -27,4 +28,5 @@ urlpatterns = [
     url(r'^', include(rounds_router.urls)),
     url(r'^workouts/(?P<workout_pk>\d+)/steps/$', StepsInWorkoutView.as_view(), name='workout-steps'),
     url(r'^obtain-auth-token/$', obtain_auth_token),
+    url(r'^docs/$', get_swagger_view(title='Wogether API')),
 ]

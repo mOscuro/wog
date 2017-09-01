@@ -23,7 +23,7 @@ urlpatterns = [
     #url(r'^auth/registration/', include('wog_user.registration.urls')),
     
     # All URLs related to REST API v1 are included in urls_api module
-    url(r'^api/v1/', include('wogether.urls_api_v1')),
+    url(r'^', include('wogether.urls_api')),
 ]
 
 

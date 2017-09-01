@@ -2,6 +2,9 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import models
 
 from wogether.settings import AUTH_USER_MODEL
+from wog_permission.constants import (PERMISSION_WORKOUT_ADMIN,
+                                      PERMISSION_WORKOUT_VIEW,
+                                      PERMISSION_WORKOUT_MODIFY)
 from wog_workout.constants import Workout_Type, PRIVATE
 
 
@@ -35,17 +38,9 @@ class Workout(models.Model):
     class Meta:
         unique_together = (('creator', 'name'),)
         permissions = (
-            ('view_workout', 'Can view the Workout'),
-            
-            ('view_workout_round', 'View create a round on a Workout'),
-            ('add_workout_round', 'Can create a round on a Workout'),
-            ('change_workout_round', 'Can update a round on a Workout'),
-            ('delete_workout_round', 'Can delete a round on a Workout'),
-
-            ('view_workout_step', 'View create a step on a Workout'),
-            ('add_workout_step', 'Can create a step on a Workout'),
-            ('change_workout_step', 'Can update a step on a Workout'),
-            ('delete_workout_step', 'Can delete a step on a Workout'),
+            (PERMISSION_WORKOUT_VIEW, 'Can view the workout and its content'),
+            (PERMISSION_WORKOUT_MODIFY, 'Can modify the workout and its content'),
+            (PERMISSION_WORKOUT_ADMIN, 'Can administer the workout and its content'),
         )
 
     

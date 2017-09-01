@@ -1,9 +1,13 @@
 #from django.db.models import Q
 from rest_framework import mixins, filters, viewsets, status
 from rest_framework.generics import get_object_or_404
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from wog_permission.permissions import IsAuthorizedForWorkout
+from wog.viewsets import WogViewSet
+from wog.mixins import ListMixin, RetrieveMixin, CreateMixin, UpdateMixin, DestroyMixin
 from wog_permission.core import WorkoutObjectPermissions
 from wog_round.models import Round, Step
 from wog_round.serializers import StepReadOnlySerializer
@@ -13,28 +17,27 @@ from wog_workout.serializers import WorkoutReadOnlySerializer, WorkoutDetailSeri
 WorkoutCreateSerializer, WorkoutUpdateSerializer
 
 
-class WorkoutViewSet(mixins.CreateModelMixin,
-                     mixins.ListModelMixin,
-                     mixins.RetrieveModelMixin,
-                     mixins.DestroyModelMixin,
-                     mixins.UpdateModelMixin,
-                     viewsets.GenericViewSet):
+####################################################
+# WORKOUTS
+####################################################
+class WorkoutViewSet(WogViewSet,
+                     ListMixin, RetrieveMixin,
+                     CreateMixin, UpdateMixin, DestroyMixin):
+    # To access the Workouts, the user must be authenticated
+    # and have permissions object-level permissions
+    permission_classes = (IsAuthenticated,)
+    filter_backends = (filters.DjangoObjectPermissionsFilter,)
+
+    update_serializer_class = WorkoutUpdateSerializer
+    create_serializer_class = WorkoutCreateSerializer
+    response_serializer_class = WorkoutReadOnlySerializer
+    serializer_class = WorkoutReadOnlySerializer
     """
     API viewset that allows projects to be viewed or edited.
     """
     queryset = Workout.objects.filter(is_active=True).select_related('creator')
     filter_backends = (filters.DjangoObjectPermissionsFilter,)
     object_permission_class = WorkoutObjectPermissions
-
-    def get_serializer_class(self):
-        if self.action in ['retrieve', 'destroy']:
-            return WorkoutDetailSerializer
-        elif self.action in ['update', 'partial_update']:
-            return WorkoutUpdateSerializer
-        elif self.action == 'create':
-            return WorkoutCreateSerializer
-        else:  # there should be only 'list' action
-            return WorkoutReadOnlySerializer
 
     def get_queryset(self):
         # Checking Query Parameter in URL
@@ -48,29 +51,25 @@ class WorkoutViewSet(mixins.CreateModelMixin,
         else:
             return viewsets.GenericViewSet.get_queryset(self) 
 
-    def create(self, request, *args, **kwargs):
-        # We override create method to use a custom serializer for the response
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        # create the object (instead of preform_create method)
-        saved = serializer.save()
-        serializer = WorkoutReadOnlySerializer(instance=saved)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-    def update(self, request, *args, **kwargs):
-        # We override update method to use a custom serializer for the response
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        serializer = WorkoutReadOnlySerializer(instance=instance)
-        return Response(serializer.data)
-    
-    def perform_destroy(self, serializer):
-        # TODO: need to remove permissions to everyone on that project in order to trigger websocket
-        super(WorkoutViewSet, self).perform_destroy(serializer)
+####################################################
+class NestedInWorkoutViewSet(WogViewSet):
+    """Verify that the user has access to a Workout."""
+    # Perform authorization validation on the workout
+    permission_classes = (IsAuthorizedForWorkout,)
+
+    def get_workout_id(self):
+        """Return the reference to the workout."""
+        return self.kwargs['workout_pk']
+
+    def get_workout(self):
+        """Return the referenced workout."""
+        return get_object_or_404(Workout.objects.all(), pk=self.get_workout_id())
+
+    def filter_on_workout(self, queryset):
+        return queryset.filter(workout=self.get_workout_id())
+
+
 
 
 ####################################################
