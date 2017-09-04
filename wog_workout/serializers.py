@@ -72,12 +72,7 @@ class WorkoutUpdateSerializer(serializers.ModelSerializer):
                 raise ValidationError(_('Standard user cannot create staff workouts'))
 
         return attrs
-    
-    def save(self):
-#         type = self.validated_data.get('type', None)
-#         if type is not None:
-#             if type == 
-        pass
+
                 
     class Meta:
         model = Workout
