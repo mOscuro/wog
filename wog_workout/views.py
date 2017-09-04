@@ -11,7 +11,6 @@ from wog.mixins import ListMixin, RetrieveMixin, CreateMixin, UpdateMixin, Destr
 from wog_permission.core import WorkoutObjectPermissions
 from wog_round.models import Round, Step
 from wog_round.serializers import StepReadOnlySerializer
-from wog_workout.constants import STAFF, PUBLIC
 from wog_workout.models import Workout
 from wog_workout.serializers import WorkoutReadOnlySerializer, WorkoutDetailSerializer, \
 WorkoutCreateSerializer, WorkoutUpdateSerializer
@@ -45,9 +44,9 @@ class WorkoutViewSet(WogViewSet,
         if workout_type == 'private':
             return Workout.objects.filter(creator=self.request.user)
         elif workout_type == 'public':
-            return Workout.objects.filter(type=PUBLIC)
+            return Workout.objects.filter(is_public=True, is_staff=False)
         elif workout_type == 'staff':
-            return Workout.objects.filter(type=STAFF)
+            return Workout.objects.filter(is_public=True, is_staff=True)
         else:
             return viewsets.GenericViewSet.get_queryset(self) 
 

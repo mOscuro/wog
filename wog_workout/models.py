@@ -5,13 +5,11 @@ from wogether.settings import AUTH_USER_MODEL
 from wog_permission.constants import (PERMISSION_WORKOUT_ADMIN,
                                       PERMISSION_WORKOUT_VIEW,
                                       PERMISSION_WORKOUT_MODIFY)
-from wog_workout.constants import Workout_Type, PRIVATE
 
 
 class Workout(models.Model):
    
     name = models.CharField(max_length=100)
-    type = models.IntegerField(choices=Workout_Type, default=PRIVATE)
     creator = models.ForeignKey(AUTH_USER_MODEL, related_name='workouts')
     time_cap = models.IntegerField(default=0)
     amrap = models.IntegerField(default=0)
@@ -19,6 +17,8 @@ class Workout(models.Model):
     description = models.TextField(blank=True)
     
     is_active = models.BooleanField(default=True)
+    is_public = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
     
     def __str__(self):
         return self.name

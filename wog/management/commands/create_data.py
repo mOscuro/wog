@@ -11,7 +11,6 @@ from wog_exercise.models import Exercise, Equipment
 from wog_round.helpers import create_round, create_step
 from wog_user.models import User
 from wog_workout.models import Workout
-from wog_workout.constants import STAFF, PRIVATE, PUBLIC
 
 
 class Command(BaseCommand):
@@ -84,7 +83,7 @@ class Command(BaseCommand):
         
         # Aphrodite Workout pattern
         print("Creating some admin workout...")
-        admin_workout1 = Workout.objects.create(name="Aphrodite", type=STAFF, creator=admin_user)
+        admin_workout1 = Workout.objects.create(name="Aphrodite", is_public=True, is_staff=True, creator=admin_user)
         cpt_rep = 50
         for cpt_round in range(5):
             admin_workout1_rounds = create_round({'workout' : admin_workout1})
@@ -94,7 +93,7 @@ class Command(BaseCommand):
             cpt_rep -= 10
         
         # Metis Workout pattern ============================================================
-        admin_workout2 = Workout.objects.create(name="Metis", type=STAFF, creator=admin_user)
+        admin_workout2 = Workout.objects.create(name="Metis", is_public=False, is_staff=True, creator=admin_user)
         # Metis - Round 1
         admin_workout2_round1 = create_round({'workout' : admin_workout2})
         create_step({'round' : admin_workout2_round1, 'exercise' : burpees, 'nb_rep' : 10})
@@ -112,7 +111,7 @@ class Command(BaseCommand):
         create_step({'round' : admin_workout2_round3, 'exercise' : jumps, 'nb_rep' : 10})
 
         # Nyx Workout pattern =============================================================
-        admin_workout3 = Workout.objects.create(name="Nyx", type=STAFF, creator=admin_user)
+        admin_workout3 = Workout.objects.create(name="Nyx", is_public=True, is_staff=True, creator=admin_user)
         # Nyx - Round 1
         admin_workout3_round1 = create_round({'workout' : admin_workout3})
         create_step({'round' : admin_workout3_round1, 'exercise' : situps, 'nb_rep' : 10})
@@ -134,7 +133,7 @@ class Command(BaseCommand):
         #=======================================================================
         print("Creating users workout...")
         user1 = User.objects.get(email="user1@wogether.com")
-        user1_workout1 = Workout.objects.create(name="Private Custom Workout 1", type=PRIVATE, creator=user1)
+        user1_workout1 = Workout.objects.create(name="Private Custom Workout 1", creator=user1)
         # 5 Rounds pattern
         user1_workout1_5round = create_round({'workout' : user1_workout1, 'nb_repeat' : 5})
         create_step({'round' : user1_workout1_5round, 'exercise' : pullups, 'nb_rep' : 10})
@@ -142,7 +141,7 @@ class Command(BaseCommand):
         create_step({'round' : user1_workout1_5round, 'exercise' : situps, 'nb_rep' : 30})
         create_step({'round' : user1_workout1_5round, 'exercise' : lunges, 'nb_rep' : 40})
             
-        user1_workout2 = Workout.objects.create(name="Public Custom Workout 1", type=PUBLIC, creator=user1)
+        user1_workout2 = Workout.objects.create(name="Public Custom Workout 1", is_public=True, creator=user1)
         # 4 Rounds pattern
         user1_workout2_4round = create_round({'workout' : user1_workout2, 'nb_repeat' : 4})
         create_step({'round' : user1_workout2_4round, 'exercise' : burpees, 'nb_rep' : 20})
@@ -150,7 +149,7 @@ class Command(BaseCommand):
         create_step({'round' : user1_workout2_4round, 'exercise' : situps, 'nb_rep' : 20})
         create_step({'round' : user1_workout2_4round, 'exercise' : air_squats, 'nb_rep' : 20})
         
-        user1_workout3 = Workout.objects.create(name="Public Custom Workout 2", type=PUBLIC, creator=user1)
+        user1_workout3 = Workout.objects.create(name="Public Custom Workout 2", is_public=True, creator=user1)
         # Mixing Steps and Rounds pattern
         user1_workout3_round1 = create_round({'workout' : user1_workout3, 'nb_repeat' : 1})
         create_step({'round' : user1_workout3_round1, 'exercise' : running, 'nb_rep' : 1, 'distance' : '1000'})
@@ -166,7 +165,7 @@ class Command(BaseCommand):
         #=======================================================================
         user2 = User.objects.get(email="user2@wogether.com")
         # 10 minutes AMRAP pattern
-        user2_workout1 = Workout.objects.create(name="Private Custom Workout 2", type=PRIVATE, creator=user2, amrap=10)
+        user2_workout1 = Workout.objects.create(name="Private Custom Workout 2", creator=user2, amrap=10)
         user2_workout1_round1 = create_round({'workout' : user2_workout1, 'nb_repeat' : 1})
         create_step({'round' : user2_workout1_round1, 'exercise' : pushups, 'nb_rep' : 10})
         create_step({'round' : user2_workout1_round1, 'exercise' : lunges, 'nb_rep' : 15})
@@ -174,7 +173,7 @@ class Command(BaseCommand):
         create_step({'round' : user2_workout1_round1, 'exercise' : situps, 'nb_rep' : 20})
         
         # 20 minutes AMRAP pattern            
-        user2_workout2 = Workout.objects.create(name="Public Custom Workout 2", type=PUBLIC, creator=user2, amrap=20)
+        user2_workout2 = Workout.objects.create(name="Public Custom Workout 2", is_public=True, creator=user2, amrap=20)
         user2_workout2_round1 = create_round({'workout' : user2_workout2, 'nb_repeat' : 1})
         create_step({'round' : user2_workout2_round1, 'exercise' : burpees, 'nb_rep' : 15})
         create_step({'round' : user2_workout2_round1, 'exercise' : situps, 'nb_rep' : 15})
