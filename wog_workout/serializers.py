@@ -32,8 +32,8 @@ class WorkoutReadOnlySerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Workout
-        fields = ('id', 'name', 'creator')
-        read_only_fields = ('id', 'name', 'creator')
+        fields = ('id', 'name', 'creator', 'is_public')
+        read_only_fields = ('id', 'name', 'creator', 'is_public')
 
 
 class WorkoutCreateSerializer(serializers.ModelSerializer):
@@ -56,7 +56,6 @@ class WorkoutUpdateSerializer(serializers.ModelSerializer):
     Used to edit infos of a workout (name, visibility, time_cap....)
     """
     name = serializers.CharField(required=False)
-    visibility = serializers.ChoiceField(choices=['staff', 'public', 'private'], required=False)
     
     def validate(self, attrs):
         user = self.context['request'].user
@@ -66,15 +65,10 @@ class WorkoutUpdateSerializer(serializers.ModelSerializer):
         if Workout.objects.filter(~Q(id=self.context['view'].kwargs['pk']), creator=workout.creator, name=attrs.get('name')):
             raise ValidationError(_('You cannot have 2 workouts with same name'))
         
-        type = attrs.get('type', None)
-        if type is not None:
-            if type == 'staff' and not user.is_staff:
-                raise ValidationError(_('Standard user cannot create staff workouts'))
-
         return attrs
 
                 
     class Meta:
         model = Workout
-        fields = ('id', 'name', 'type', 'visibility')    
+        fields = ('id', 'name', 'is_public')    
 

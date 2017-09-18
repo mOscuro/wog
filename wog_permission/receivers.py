@@ -18,8 +18,7 @@ from wog_permission.constants import (AUTHENTICATED_USER_GROUP,
 @receiver(post_save, sender=User)
 def give_user_standard_model_permissions(sender, instance, **kwargs):
     if kwargs.get('created', True):
-        auth_group = Group.objects.get(name=AUTHENTICATED_USER_GROUP)
-        auth_group.user_set.add(instance)
+        instance.groups.add(Group.objects.get(name=AUTHENTICATED_USER_GROUP))
 
 ######################################
 # AT WORKOUT CREATION

@@ -46,10 +46,3 @@ class IsAuthorizedForWorkout(IsAuthorizedForModel):
     pk_kwarg = 'workout_pk'
     klass = Workout
     klass_permission = WorkoutItemsObjectPermissions()
-
-
-# class IsAuthorizedForProjectMember(IsAuthorizedForModel):
-#     """Verify the user has Admin permission on the Project specified in the URL."""
-#     pk_kwarg = 'project_pk'
-#     klass = Project
-#     klass_permission = ProjectObjectPermissions()
