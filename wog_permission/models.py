@@ -10,9 +10,7 @@ from guardian.shortcuts import assign_perm
 from rest_framework.exceptions import APIException
 from rest_framework.permissions import DjangoObjectPermissions
 
-from wog_permission.constants import (PERMISSION_WORKOUT_ADMIN,
-                                      PERMISSION_WORKOUT_MODIFY,
-                                      PERMISSION_WORKOUT_VIEW)
+from wog_permission.constants import PERMISSION_WORKOUT_MODIFY, PERMISSION_WORKOUT_VIEW
 
 
 ####################################################
@@ -28,10 +26,10 @@ class WorkoutObjectPermissions(DjangoObjectPermissions):
         'GET': [PERMISSION_WORKOUT_VIEW],
         'OPTIONS': [PERMISSION_WORKOUT_VIEW],
         'HEAD': [PERMISSION_WORKOUT_VIEW],
-        'PATCH': [PERMISSION_WORKOUT_ADMIN],
-        'POST': [PERMISSION_WORKOUT_ADMIN],
-        'PUT': [PERMISSION_WORKOUT_ADMIN],
-        'DELETE': [PERMISSION_WORKOUT_ADMIN],
+        'PATCH': [PERMISSION_WORKOUT_MODIFY],
+        'POST': [PERMISSION_WORKOUT_MODIFY],
+        'PUT': [PERMISSION_WORKOUT_MODIFY],
+        'DELETE': [PERMISSION_WORKOUT_MODIFY],
     }
 
 class WorkoutItemsObjectPermissions(DjangoObjectPermissions):

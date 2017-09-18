@@ -2,9 +2,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import models
 
 from wogether.settings import AUTH_USER_MODEL
-from wog_permission.constants import (PERMISSION_WORKOUT_ADMIN,
-                                      PERMISSION_WORKOUT_VIEW,
-                                      PERMISSION_WORKOUT_MODIFY)
+from wog_permission.constants import PERMISSION_WORKOUT_VIEW, PERMISSION_WORKOUT_MODIFY
 
 
 class Workout(models.Model):
@@ -40,7 +38,6 @@ class Workout(models.Model):
         permissions = (
             (PERMISSION_WORKOUT_VIEW, 'Can view the workout and its content'),
             (PERMISSION_WORKOUT_MODIFY, 'Can modify the workout and its content'),
-            (PERMISSION_WORKOUT_ADMIN, 'Can administer the workout and its content'),
         )
 
     
