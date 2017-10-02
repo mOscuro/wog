@@ -82,6 +82,7 @@ INSTALLED_APPS = [
     
     # The Django sites framework is required for allauth app
     'django.contrib.sites',
+    'corsheaders',
 
     # Contribution apps
     'rest_framework',

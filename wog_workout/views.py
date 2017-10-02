@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 from wog_permission.permissions import IsAuthorizedForWorkout
 from wog.viewsets import WogViewSet
 from wog.mixins import ListMixin, RetrieveMixin, CreateMixin, UpdateMixin, DestroyMixin
-from wog_permission.core import WorkoutObjectPermissions
+from wog_permission.core import IsCreatorOrReadOnly
 from wog_round.models import Round, Step
 from wog_round.serializers import StepReadOnlySerializer
 from wog_workout.models import Workout
@@ -24,7 +24,7 @@ class WorkoutViewSet(WogViewSet,
                      CreateMixin, UpdateMixin, DestroyMixin):
     # To access the Workouts, the user must be authenticated
     # and have permissions object-level permissions
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, IsCreatorOrReadOnly)
     filter_backends = (filters.DjangoObjectPermissionsFilter,)
 
     update_serializer_class = WorkoutUpdateSerializer
@@ -36,7 +36,7 @@ class WorkoutViewSet(WogViewSet,
     """
     queryset = Workout.objects.filter(is_active=True).select_related('creator')
     filter_backends = (filters.DjangoObjectPermissionsFilter,)
-    object_permission_class = WorkoutObjectPermissions
+    # object_permission_class = IsWorkoutCreatorOrReadOnly
 
     def get_queryset(self):
         # Checking Query Parameter in URL
