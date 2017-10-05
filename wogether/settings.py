@@ -17,6 +17,7 @@ from wogether.app_settings.allauth import *  # @UnusedWildImport
 from wogether.app_settings.guardian import *  # @UnusedWildImport
 from wogether.app_settings.rest import *  # @UnusedWildImport
 from wogether.app_settings.restauth import *  # @UnusedWildImport
+from wogether.app_settings.swagger import *  # @UnusedWildImport
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -90,14 +91,15 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'rest_auth.registration',
+    'rest_framework_swagger',
     'guardian',
     
     # Wogether apps
-    'permission',
-    'user_account',
-    'workout',
-    'round',
-    'exercise',
+    'wog',
+    'wog_user',
+    'wog_workout',
+    'wog_round',
+    'wog_exercise',
 ]
 
 MIDDLEWARE = [
@@ -171,7 +173,7 @@ AUTHENTICATION_BACKENDS = (
     'guardian.backends.ObjectPermissionBackend',
 )
 
-AUTH_USER_MODEL = 'user_account.User'
+AUTH_USER_MODEL = 'wog_user.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/

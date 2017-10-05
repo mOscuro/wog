@@ -2,7 +2,7 @@
 
 # ACCOUNT_ADAPTER (=�allauth.account.adapter.DefaultAccountAdapter�)
 # Specifies the adapter class to use, allowing you to alter certain default behaviour.
-ACCOUNT_ADAPTER = "user_account.adapter.MyAccountAdapter"
+ACCOUNT_ADAPTER = "wog_user.adapter.MyAccountAdapter"
 
 # ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS( (=True)
 # The default behaviour is to redirect authenticated users to ACCOUNT_LOGIN_REDIRECT_URL when they try accessing
@@ -61,7 +61,7 @@ ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 # ACCOUNT_FORMS (={})
 # Used to override forms, for example: {�login�: �myapp.forms.LoginForm�}
 ACCOUNT_FORMS = {
-    'signup': 'user_account.registration.forms.SignupForm'
+    'signup': 'wog_user.registration.forms.SignupForm'
 }
 # ACCOUNT_LOGIN_ATTEMPTS_LIMIT (=5)
 # Number of failed login attempts. When this number is exceeded, the user is prohibited from logging in for the
