@@ -9,7 +9,7 @@ from wog_permission.permissions import IsAuthorizedForWorkout
 from wog_permission.core import IsCreatorOrReadOnly
 from wog.viewsets import WogViewSet
 from wog.mixins import ListMixin, RetrieveMixin, CreateMixin, UpdateMixin, DestroyMixin
-from wog_permission.core import WorkoutObjectPermissions
+from wog_permission.core import IsCreatorOrReadOnly
 from wog_round.models import Round, Step
 from wog_round.serializers import StepReadOnlySerializer
 from wog_workout.models import Workout
@@ -37,7 +37,7 @@ class WorkoutViewSet(WogViewSet,
     """
     queryset = Workout.objects.filter(is_active=True).select_related('creator')
     filter_backends = (filters.DjangoObjectPermissionsFilter,)
-    object_permission_class = WorkoutObjectPermissions
+    # object_permission_class = IsWorkoutCreatorOrReadOnly
 
     def get_queryset(self):
         # Checking Query Parameter in URL

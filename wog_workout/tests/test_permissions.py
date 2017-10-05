@@ -32,7 +32,7 @@ class WorkoutPermissionsTestCase(TestCase):
 
     def test_project_model_permissions(self):
         """
-        Test that a user has every Project model permission
+        Test that a user has every Workout model permission
         """
         # User 1 is creator of workouts 1 so he has full permissions on his own workouts
         self.assertTrue(self.user1.has_perm(PERMISSION_WORKOUT_VIEW, self.wod_private), "Model view permission error")
