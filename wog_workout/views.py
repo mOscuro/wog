@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from wog_permission.permissions import IsAuthorizedForWorkout
+from wog_permission.core import IsCreatorOrReadOnly
 from wog.viewsets import WogViewSet
 from wog.mixins import ListMixin, RetrieveMixin, CreateMixin, UpdateMixin, DestroyMixin
 from wog_permission.core import WorkoutObjectPermissions
@@ -24,7 +25,7 @@ class WorkoutViewSet(WogViewSet,
                      CreateMixin, UpdateMixin, DestroyMixin):
     # To access the Workouts, the user must be authenticated
     # and have permissions object-level permissions
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, IsCreatorOrReadOnly)
     filter_backends = (filters.DjangoObjectPermissionsFilter,)
 
     update_serializer_class = WorkoutUpdateSerializer

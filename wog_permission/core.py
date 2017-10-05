@@ -40,11 +40,11 @@ class IsWorkoutCreatorOrReadOnly(permissions.BasePermission):
 
 class WorkoutObjectPermissions(DjangoObjectPermissions):
     perms_map = {
-        'GET': ['workout.view_project'],
+        'GET': ['wog_workout.view_project'],
         'OPTIONS': [],
         'HEAD': [],
-        'POST': ['workout.add_workout'],
-        'PUT': ['workout.change_workout'],
-        'PATCH': ['workout.change_workout'],
-        'DELETE': ['workout.delete_workout'],
+        'POST': ['wog_workout.add_workout'],
+        'PUT': ['wog_workout.change_workout'],
+        'PATCH': ['wog_workout.change_workout'],
+        'DELETE': ['wog_workout.delete_workout'],
     }

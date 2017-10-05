@@ -1,10 +1,10 @@
 
 from rest_framework.permissions import DjangoObjectPermissions
 
-PERMISSION_WORKOUT_VIEW = 'workout.view_workout'
-PERMISSION_WORKOUT_ADD = 'workout.add_workout'
-PERMISSION_WORKOUT_MODIFY = 'workout.change_workout'
-PERMISSION_WORKOUT_DELETE = 'workout.delete_workout'
+PERMISSION_WORKOUT_VIEW = 'wog_workout.view_workout'
+PERMISSION_WORKOUT_ADD = 'wog_workout.add_workout'
+PERMISSION_WORKOUT_MODIFY = 'wog_workout.change_workout'
+PERMISSION_WORKOUT_DELETE = 'wog_workout.delete_workout'
 
 class WorkoutObjectPermissions(DjangoObjectPermissions):
     perms_map = {
