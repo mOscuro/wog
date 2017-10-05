@@ -3,9 +3,14 @@ from allauth.socialaccount.providers.twitter.views import TwitterOAuthAdapter
 from rest_auth.registration.views import SocialLoginView
 from rest_auth.social_serializers import TwitterLoginSerializer
 from rest_auth.views import LoginView
+from rest_framework.compat import is_anonymous
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import BasePermission, IsAuthenticated
 import rest_auth
 
+class IsAnonymous(BasePermission):
+    def has_permission(self, request, view):
+        return not request.user or is_anonymous(request.user)
 
 class FacebookLogin(SocialLoginView):
     adapter_class = FacebookOAuth2Adapter
@@ -30,6 +35,7 @@ class LoginView(rest_auth.views.LoginView):
 
     * 400 Bad Request with error details (field + message)
     """
+    permission_classes = (IsAnonymous,)
     authentication_classes = (TokenAuthentication,)
 
 
@@ -40,6 +46,7 @@ class LogoutView(rest_auth.views.LogoutView):
 
     Accepts/Returns nothing.
     """
+    permission_classes = (IsAuthenticated,)
 
 
 class UserDetailsView(rest_auth.views.UserDetailsView):

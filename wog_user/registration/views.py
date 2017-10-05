@@ -11,12 +11,13 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from wog_user.registration.serializers import SendVerificationEmailSerializer
-
+from wog_user.authentication.views import IsAnonymous
 
 class RegisterView(rest_auth_views.RegisterView):
     """
     API view used to register a new user.
     """
+    permission_classes = (IsAnonymous,)
 
 
 class VerifyEmailView(rest_auth_views.VerifyEmailView):
@@ -24,6 +25,7 @@ class VerifyEmailView(rest_auth_views.VerifyEmailView):
     API view used to confirm the email address of a newly registered user.
     """
     serializer_class = VerifyEmailSerializer
+    permission_classes = (IsAnonymous,)
 
     def get_object(self, queryset=None):
         if queryset is None:
@@ -56,7 +58,7 @@ class SendVerificationEmailView(CreateAPIView):
     * if the email address does not correspond to a user, no error message is sent ((HTTP code 200)
     """
     serializer_class = SendVerificationEmailSerializer
-    permission_classes = (AllowAny, )
+    permission_classes = (IsAnonymous,)
 
     def post(self, request, *args, **kwargs):
         serializer = SendVerificationEmailSerializer(data=request.data)

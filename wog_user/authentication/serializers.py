@@ -4,7 +4,7 @@ import time
 from allauth.account import app_settings as allauth_settings
 from allauth.account.forms import SetPasswordForm, UserTokenForm
 from allauth.account.utils import send_email_confirmation
-from allauth.utils import get_current_site
+from django.contrib.sites.shortcuts import get_current_site
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.tokens import default_token_generator
