@@ -82,7 +82,6 @@ INSTALLED_APPS = [
     
     # The Django sites framework is required for allauth app
     'django.contrib.sites',
-    'corsheaders',
 
     # Contribution apps
     'rest_framework',
@@ -97,7 +96,6 @@ INSTALLED_APPS = [
     
     # Wogether apps
     'wog',
-    'wog_permission',
     'wog_user',
     'wog_workout',
     'wog_round',

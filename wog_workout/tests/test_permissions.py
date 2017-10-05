@@ -2,7 +2,7 @@ from django.test import TestCase
 from wog.management.commands.create_permissions import create_permissions
 from wog_exercise.exercise_constants import AMATEUR, BODYWEIGHT
 from wog_exercise.models import Exercise
-from wog_permission.constants import PERMISSION_WORKOUT_VIEW, PERMISSION_WORKOUT_MODIFY
+from wog_workout.constants import PERMISSION_WORKOUT_VIEW, PERMISSION_WORKOUT_MODIFY
 from wog_user.models import User
 from wog_workout.models import Workout
 

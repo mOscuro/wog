@@ -1,7 +1,7 @@
 from django.contrib.auth.models import Group, Permission
 from django.core.management.base import BaseCommand
 
-from wog_permission.constants import WOG_USER_GROUP_NAME
+from wog_workout.constants import WOG_USER_GROUP_NAME
 
 
 def create_permissions():

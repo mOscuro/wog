@@ -5,18 +5,10 @@ from guardian.shortcuts import assign_perm
 
 from wog_user.models import User
 from wog_workout.models import Workout
-from wog_permission.constants import (WOG_USER_GROUP_NAME,
+from wog_workout.constants import (WOG_USER_GROUP_NAME,
                                       PERMISSION_WORKOUT_VIEW,
                                       PERMISSION_WORKOUT_MODIFY)
 
-
-######################################
-# AT USER CREATION
-######################################
-@receiver(post_save, sender=User)
-def give_user_standard_model_permissions(sender, instance, **kwargs):
-    if kwargs.get('created', True):
-        instance.groups.add(Group.objects.get(name=WOG_USER_GROUP_NAME))
 
 ######################################
 # AT WORKOUT CREATION
