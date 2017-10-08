@@ -39,12 +39,13 @@ SITE_ID = 1
 #########################################
 # EMAIL CONFIGURATION
 #########################################
-EMAIL_HOST = '192.168.0.250'
-#  EMAIL_HOST_PASSWORD = ''
-#  EMAIL_HOST_USER = ''
-#  EMAIL_PORT = 25
-EMAIL_SUBJECT_PREFIX = '[Wogether]'
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_HOST_USER = 'moscuro'
+EMAIL_HOST_PASSWORD = 'marionne44'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'no-reply@wogether.com'
+ADMINS = [('Matthieu', 'matthieu.oscuro@gmail.com')]
 
 
 
