@@ -1,31 +1,69 @@
-from allauth.account.models import EmailAddress, EmailConfirmation
-from allauth.account.utils import send_email_confirmation
-from allauth.utils import get_user_model
+
 from django.utils.translation import ugettext_lazy as _
-from rest_auth.registration import views as rest_auth_views
-from rest_auth.registration.serializers import VerifyEmailSerializer
+from allauth.account.models import EmailAddress, EmailConfirmation
+from allauth.account.utils import complete_signup, send_email_confirmation
+from allauth.account.views import ConfirmEmailView
+from allauth.account import app_settings as allauth_settings
+from allauth.utils import get_user_model
+from knox.models import AuthToken
 from rest_framework import status
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, MethodNotAllowed
 from rest_framework.generics import CreateAPIView
-from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from wog_user.registration.serializers import SendVerificationEmailSerializer
+from wog_user.registration.serializers import RegisterSerializer,\
+    SendVerificationEmailSerializer, VerifyEmailSerializer
 from wog_user.authentication.views import IsAnonymous
+from wog_user.authentication.serializers import TokenSerializer
 
-class RegisterView(rest_auth_views.RegisterView):
+
+class RegisterView(CreateAPIView):
     """
     API view used to register a new user.
     """
     permission_classes = (IsAnonymous,)
+    serializer_class = RegisterSerializer
+    token_model = AuthToken
+
+    def create(self, request, *args, **kwargs):
+        # Verify creation is possible
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        # Create the user and a first AuthToken
+        user = serializer.save(self.request)
+        token = AuthToken.objects.create(user)
+        data = {}
+        complete_signup(self.request._request, user,
+                        allauth_settings.EMAIL_VERIFICATION,
+                        None)
+        if allauth_settings.EMAIL_VERIFICATION != \
+                allauth_settings.EmailVerificationMethod.MANDATORY:
+            data = TokenSerializer({'token': token, 'user': user}).data
+        return Response(data, status=status.HTTP_201_CREATED)
 
 
-class VerifyEmailView(rest_auth_views.VerifyEmailView):
+class VerifyEmailView(APIView, ConfirmEmailView):
     """
     API view used to confirm the email address of a newly registered user.
     """
     serializer_class = VerifyEmailSerializer
     permission_classes = (IsAnonymous,)
+    allowed_methods = ('POST', 'OPTIONS', 'HEAD')
+
+    def get(self, *args, **kwargs):
+        raise MethodNotAllowed('GET')
+
+    def post(self, request, *args, **kwargs):
+        serializer = VerifyEmailSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.kwargs['key'] = serializer.validated_data['key']
+        confirmation = self.get_object()
+        confirmation.confirm(self.request)
+        # Accept all pending MembershipRequests
+        user = confirmation.email_address.user
+        return Response({'message': [_('ok')]}, status=status.HTTP_200_OK)
 
     def get_object(self, queryset=None):
         if queryset is None:
@@ -78,27 +116,29 @@ class SendVerificationEmailView(CreateAPIView):
         return Response({'message': _('ok')}, status=status.HTTP_200_OK)
 
 
-class SocialLoginView(rest_auth_views.SocialLoginView):
-    """
-    class used for social authentications
-    example usage for facebook with access_token
-    ::
+# class SocialLoginView(rest_auth_views.SocialLoginView):
+#     """
+#     class used for social authentications
+#     example usage for facebook with access_token
+#     ::
 
-        from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
+#         from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
 
-        class FacebookLogin(SocialLoginView):
-            adapter_class = FacebookOAuth2Adapter
+#         class FacebookLogin(SocialLoginView):
+#             adapter_class = FacebookOAuth2Adapter
 
 
-    example usage for facebook with code:
-    ::
+#     example usage for facebook with code:
+#     ::
 
-        from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
-        from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+#         from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
+#         from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 
-        class FacebookLogin(SocialLoginView):
-            adapter_class = FacebookOAuth2Adapter
-             client_class = OAuth2Client
-             callback_url = 'localhost:8000'
+#         class FacebookLogin(SocialLoginView):
+#             adapter_class = FacebookOAuth2Adapter
+#              client_class = OAuth2Client
+#              callback_url = 'localhost:8000'
 
-    """
+#     """
+#     permission_classes = (IsAnonymous,)
+#     serializer_class = SocialLoginSerializer

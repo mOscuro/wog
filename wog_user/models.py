@@ -96,3 +96,7 @@ class User(AbstractAccount, GuardianUserMixin):
 
     password, email, first_name and last_name are required.
     """
+
+def get_user_display_name(user):
+    """ Used mostly by all_auth for emails to fill templates with user name """
+    return '%s %s' % (user.first_name, user.last_name)

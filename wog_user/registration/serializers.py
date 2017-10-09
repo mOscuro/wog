@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
 
 
-class CustomRegisterSerializer(serializers.Serializer):
+class RegisterSerializer(serializers.Serializer):
     email = serializers.EmailField(required=allauth_settings.EMAIL_REQUIRED)
     first_name = serializers.CharField(required=True)
     last_name = serializers.CharField(required=True)
@@ -52,3 +52,6 @@ class CustomRegisterSerializer(serializers.Serializer):
 
 class SendVerificationEmailSerializer(serializers.Serializer):
     email = serializers.EmailField()
+
+class VerifyEmailSerializer(serializers.Serializer):
+    key = serializers.CharField()

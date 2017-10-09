@@ -1,24 +1,60 @@
+
 import hashlib
 import time
 
 from allauth.account import app_settings as allauth_settings
 from allauth.account.forms import SetPasswordForm, UserTokenForm
 from allauth.account.utils import send_email_confirmation
-from django.contrib.sites.shortcuts import get_current_site
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers, exceptions
 
+from rest_framework.exceptions import ValidationError
 from wog_user.authentication.forms import ResetPasswordForm
-from wog_user.models import User
+from wog_user.models import User #, Preference, Profile
 
 
-class CustomLoginSerializer(serializers.Serializer):
+# class UserPreferenceSerializer(serializers.ModelSerializer):
+#     language_name = serializers.SerializerMethodField()
+    
+#     def get_language_name(self, obj):
+#         return obj.get_ui_language_display()
+
+#     class Meta:
+#         model = Preference
+#         fields = ('ui_language', 'language_name')
+
+# class UserProfileSerializer(serializers.ModelSerializer):
+
+#     class Meta:
+#         model = Profile
+#         fields = ('avatar_url',)
+
+class UserInfoResponseSerializer(serializers.ModelSerializer):
+    """User model w/o password."""
+    # preferences = UserPreferenceSerializer(source='preference')
+    # profile = UserProfileSerializer()
+
+    class Meta:
+        model = User
+        fields = ('id', 'first_name', 'last_name', 'email')
+
+
+class TokenSerializer(serializers.Serializer):
+    key = serializers.CharField(source='token', required=False)
+    email = serializers.EmailField(source='user.email')
+    first_name = serializers.CharField(source='user.first_name')
+    last_name = serializers.CharField(source='user.last_name')
+    # preferences = UserPreferenceSerializer(source='user.preference')
+    # profile = UserProfileSerializer(source='user.profile')
+
+
+class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
     password = serializers.CharField(style={'input_type': 'password'})
 
@@ -39,8 +75,7 @@ class CustomLoginSerializer(serializers.Serializer):
                 current_attempt_time = time.mktime(dt.timetuple())
                 if len(login_data) >= allauth_settings.LOGIN_ATTEMPTS_LIMIT and current_attempt_time < \
                         (login_data[-1] + allauth_settings.LOGIN_ATTEMPTS_TIMEOUT):
-                    raise exceptions.AuthenticationFailed(
-                        _('Too many failed login attempts. Try again later.'))
+                    raise exceptions.AuthenticationFailed('Too many failed login attempts. Try again later.')
 
     def authenticate(self, **credentials):
         """Only authenticates, does not actually login. See `login`"""
@@ -70,23 +105,21 @@ class CustomLoginSerializer(serializers.Serializer):
         # Did we get back an active user?
         if user:
             if not user.is_active:
-                msg = _('User account is disabled.')
-                raise exceptions.ValidationError(msg)
+                raise exceptions.ValidationError('User account is disabled.')
         else:
-            msg = _('Unable to log in with provided credentials.')
-            raise exceptions.ValidationError(msg)
+            raise exceptions.ValidationError('Unable to log in with provided credentials.')
 
         if allauth_settings.EMAIL_VERIFICATION == allauth_settings.EmailVerificationMethod.MANDATORY:
             email_address = user.emailaddress_set.get(email=user.email)
             if not email_address.verified:
                 send_email_confirmation(self.context['request']._request, user)
-                raise serializers.ValidationError(_('E-mail is not verified.'))
+                raise ValidationError("Email not verified")
 
         attrs['user'] = user
         return attrs
 
 
-class CustomPasswordResetSerializer(serializers.Serializer):
+class PasswordResetSerializer(serializers.Serializer):
     """
     Serializer for requesting a password reset e-mail.
     """
@@ -103,7 +136,7 @@ class CustomPasswordResetSerializer(serializers.Serializer):
         # Create PasswordResetForm with the serializer
         self.reset_form = self.password_reset_form_class(data=self.initial_data)
         if not self.reset_form.is_valid():
-            raise serializers.ValidationError(_('Error'))
+            raise ValidationError()
 
         return self.reset_form.clean_email()
 
@@ -120,7 +153,7 @@ class CustomPasswordResetSerializer(serializers.Serializer):
         self.reset_form.save(**opts)
 
 
-class CustomPasswordResetConfirmSerializer(serializers.Serializer):
+class PasswordResetConfirmSerializer(serializers.Serializer):
     """
     Serializer for requesting a password reset e-mail.
     """
@@ -143,7 +176,7 @@ class CustomPasswordResetConfirmSerializer(serializers.Serializer):
 
         if not token_form.is_valid():
             self.reset_user = None
-            raise serializers.ValidationError({'non_field_errors': ['The password reset token was invalid.']})
+            raise ValidationError({'non_field_errors': ["Token invalid"]})
         else:
             self.reset_user = token_form.reset_user
 
@@ -164,8 +197,7 @@ class CustomPasswordResetConfirmSerializer(serializers.Serializer):
         self.set_password_form.save()
 
 
-class CustomPasswordChangeSerializer(serializers.Serializer):
-
+class PasswordUpdateSerializer(serializers.Serializer):
     old_password = serializers.CharField(max_length=128)
     password1 = serializers.CharField(max_length=128)
     password2 = serializers.CharField(max_length=128)
@@ -179,7 +211,7 @@ class CustomPasswordChangeSerializer(serializers.Serializer):
         self.logout_on_password_change = getattr(
             settings, 'LOGOUT_ON_PASSWORD_CHANGE', False
         )
-        super(CustomPasswordChangeSerializer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         if not self.old_password_field_enabled:
             self.fields.pop('old_password')
@@ -195,7 +227,7 @@ class CustomPasswordChangeSerializer(serializers.Serializer):
         )
 
         if all(invalid_password_conditions):
-            raise serializers.ValidationError('Invalid password')
+            raise serializers.ValidationError('Passwords do no match.')
         return value
 
     def validate(self, attrs):
@@ -214,17 +246,6 @@ class CustomPasswordChangeSerializer(serializers.Serializer):
             update_session_auth_hash(self.request, self.user)
         else:
             try:
-                self.request.user.auth_token.delete()
+                self.request.user.auth_token_set.all().delete()
             except (AttributeError, ObjectDoesNotExist):  # If we don't use token type authentication
                 pass
-
-
-class UserDetailsSerializer(serializers.ModelSerializer):
-    """
-    User model w/o password
-    """
-
-    class Meta:
-        model = User
-        fields = ('id', 'first_name', 'last_name', 'email')
-        read_only_fields = ('email',)

@@ -12,8 +12,9 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 
-from wogether.app_settings.allauth import *  # @UnusedWildImport
+# from wogether.app_settings.allauth import *  # @UnusedWildImport
 #from wogether.app_settings.grappelli import *  # @UnusedWildImport
+from wogether.app_settings.external_auth import *  # @UnusedWildImport
 from wogether.app_settings.guardian import *  # @UnusedWildImport
 from wogether.app_settings.rest import *  # @UnusedWildImport
 from wogether.app_settings.restauth import *  # @UnusedWildImport
@@ -85,13 +86,13 @@ INSTALLED_APPS = [
     'django.contrib.sites',
 
     # Contribution apps
+    'annoying',
     'rest_framework',
-    'rest_framework.authtoken',
-    'rest_auth',
+    'knox',
     'allauth',
     'allauth.account',
-    'allauth.socialaccount',
-    'rest_auth.registration',
+    # 'allauth.socialaccount',
+    # 'rest_auth.registration',
     'rest_framework_swagger',
     'guardian',
     
