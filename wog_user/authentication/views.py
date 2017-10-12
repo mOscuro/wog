@@ -20,7 +20,6 @@ from wog_user.authentication.serializers import (LoginSerializer,
                                                 UserInfoResponseSerializer)
 
 
-#TODO BEES-1067: factorize to bb
 class IsAnonymous(BasePermission):
     def has_permission(self, request, view):
         return not request.user or is_anonymous(request.user)

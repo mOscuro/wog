@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.contrib.auth.models import PermissionsMixin
 from guardian.mixins import GuardianUserMixin
 
-class AccountManager(BaseUserManager):
+class WogUserManager(BaseUserManager):
     use_in_migrations = True
 
     def _create_user(self, username, email, password=None, **extra_fields):
@@ -38,7 +38,7 @@ class AccountManager(BaseUserManager):
 
         return self._create_user(username, email, password, **extra_fields)
 
-class AbstractAccount(AbstractBaseUser, PermissionsMixin):
+class AbstractWogUser(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=70,unique=True) 
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=70, blank=True)
@@ -61,7 +61,7 @@ class AbstractAccount(AbstractBaseUser, PermissionsMixin):
     )
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
 
-    objects = AccountManager()
+    objects = WogUserManager()
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
@@ -89,7 +89,7 @@ class AbstractAccount(AbstractBaseUser, PermissionsMixin):
         """
         send_mail(subject, message, from_email, [self.email], **kwargs)
     
-class User(AbstractAccount, GuardianUserMixin):
+class User(AbstractWogUser, GuardianUserMixin):
     """
     Users within the Django authentication system are represented by this
     model.
