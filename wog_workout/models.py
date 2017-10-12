@@ -60,7 +60,10 @@ class Progression(models.Model):
     - The Progression will be used to update every athlete's leaderboard during a workout in "competition mode"
     """
     session = models.ForeignKey(Session)
-    step = models.ForeignKey('wog_round.Step')
+    step = models.IntegerField(null=False, blank=False)
     user = models.ForeignKey(AUTH_USER_MODEL)
     time = models.IntegerField() # seconds
+
+    class Meta:
+        unique_together = (('user', 'session', 'step'),)    
     
