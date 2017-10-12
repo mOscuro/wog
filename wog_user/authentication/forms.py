@@ -1,6 +1,6 @@
 from allauth.account.adapter import get_adapter
 from allauth.account.utils import filter_users_by_email, user_pk_to_url_str
-from allauth.utils import get_current_site
+from django.contrib.sites.shortcuts import get_current_site
 from django import forms
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.translation import ugettext_lazy as _

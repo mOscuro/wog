@@ -3,7 +3,7 @@ from allauth.account.adapter import DefaultAccountAdapter
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from wog_wogether.core.urlresolvers import reverse
+from wogether.core.urlresolvers import reverse
 #from bb_user_preference.models import Preference
 
 
@@ -14,7 +14,8 @@ class MyAccountAdapter(DefaultAccountAdapter):
         Validates a password. You can hook into this if you want to
         restric the allowed password choices.
         """
-        min_length = allauth_settings.PASSWORD_MIN_LENGTH
+        # min_length = allauth_settings.PASSWORD_MIN_LENGTH
+        min_length = 6
         if len(password) < min_length:
             raise forms.ValidationError(_('Password must be a minimum of {0} '
                                           'characters.').format(min_length))
