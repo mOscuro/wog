@@ -45,6 +45,13 @@ class IsWorkoutCreatorOrReadOnly(permissions.BasePermission):
                 or (request.method in permissions.SAFE_METHODS and workout_instance.is_public)
 
 
+class IsSessionCreatorOrReadOnly(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+
+        return obj.creator == request.user\
+                or (request.method in permissions.SAFE_METHODS and obj.is_public)
+
 #===============================================================================
 # PERMISSIONS MAPPING FOR WORKOUT REQUESTS
 #===============================================================================

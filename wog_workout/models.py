@@ -1,7 +1,11 @@
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth.models import Group
 from django.db import models
 
 from wogether.settings import AUTH_USER_MODEL
+from wog_permissions.constants import (PERMISSION_SESSION_INVITED,
+                                       PERMISSION_SESSION_SPECTATOR,
+                                       PERMISSION_SESSION_COMPETITOR)
 from wog_workout.constants import PERMISSION_WORKOUT_VIEW, PERMISSION_WORKOUT_MODIFY
 
 
@@ -40,26 +44,33 @@ class Workout(models.Model):
         )
 
     
-class Session(models.Model):
+class WorkoutSession(models.Model):
     """
     - A Session materialize the execution of a workout.
     - It can be seen as a pool where one or more athletes wait for the workout to start
     - A session can be planned hours or days before the beginning of the workout,
         in order to wait for other athlete than the creator to join in
     """
-    workout = models.ForeignKey(Workout, on_delete=models.CASCADE)
+    workout = models.ForeignKey('Workout', on_delete=models.CASCADE, related_name='session_groups')
     creator = models.ForeignKey(AUTH_USER_MODEL, related_name='sessions')
-    date = models.DateTimeField()
-    users = models.ManyToManyField(AUTH_USER_MODEL, related_name='athletes')
+    created_at = models.DateTimeField(auto_now=True)
+    start = models.DateTimeField(default=None, null=True, blank=True)
+
+    class Meta:
+        permissions = (
+            (PERMISSION_SESSION_INVITED, 'Can view session but not interact with progression'),
+            (PERMISSION_SESSION_SPECTATOR, 'Can only read progression for the session'),
+            (PERMISSION_SESSION_COMPETITOR, 'Can read, create or delete progression'),
+        )
 
 
-class Progression(models.Model):
+class WorkoutProgression(models.Model):
     """
     - The Progression follows where an athlete is at, during a workout
     - It logs the time the athlete took to complete each step of a workout
     - The Progression will be used to update every athlete's leaderboard during a workout in "competition mode"
     """
-    session = models.ForeignKey(Session)
+    session = models.ForeignKey('WorkoutSession')
     step = models.IntegerField(null=False, blank=False)
     user = models.ForeignKey(AUTH_USER_MODEL)
     time = models.IntegerField() # seconds

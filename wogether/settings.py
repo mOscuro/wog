@@ -99,9 +99,10 @@ INSTALLED_APPS = [
     # Wogether apps
     'wog',
     'wog_user',
+    'wog_permissions',
+    'wog_exercise',
     'wog_workout',
     'wog_round',
-    'wog_exercise',
 ]
 
 MIDDLEWARE = [

@@ -5,14 +5,16 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from wog_workout.permissions import IsWorkoutCreatorOrReadOnly
+from wog_permissions.permissions import IsWorkoutCreatorOrReadOnly, IsSessionCreatorOrReadOnly
 from wog.viewsets import WogViewSet
 from wog.mixins import ListMixin, RetrieveMixin, CreateMixin, UpdateMixin, DestroyMixin
 from wog_round.models import Round, Step
 from wog_round.serializers import StepReadOnlySerializer
-from wog_workout.models import Workout
-from wog_workout.serializers import WorkoutReadOnlySerializer, WorkoutDetailSerializer, \
-WorkoutCreateSerializer, WorkoutUpdateSerializer
+from wog_workout.models import Workout, WorkoutSession
+from wog_workout.serializers import (WorkoutReadOnlySerializer, WorkoutDetailSerializer,
+                                     WorkoutCreateSerializer, WorkoutUpdateSerializer,
+                                     WorkoutSessionResponseSerializer, WorkoutSessionCreateSerializer,
+                                     WorkoutSessionUpdateSerializer)
 
 
 ####################################################
@@ -67,3 +69,18 @@ class NestedInWorkoutViewSet(WogViewSet):
 
     def filter_on_workout(self, queryset):
         return queryset.filter(workout=self.get_workout_id())
+
+
+class WorkoutSessionViewSet(WogViewSet, ListMixin, RetrieveMixin,
+                            CreateMixin, UpdateMixin, DestroyMixin):
+
+    permission_classes = (IsAuthenticated, IsSessionCreatorOrReadOnly)
+
+    response_serializer_class = WorkoutSessionResponseSerializer
+    create_serializer_class = WorkoutSessionCreateSerializer
+    update_serializer_class = WorkoutSessionUpdateSerializer
+
+    def get_queryset(self):
+        return WorkoutSession.objects.all()\
+                             .filter(workout=self.kwargs['workout_pk'])
+                            #.prefetch_related('project_permissions', 'related_user')
