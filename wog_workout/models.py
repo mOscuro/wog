@@ -37,6 +37,12 @@ class Workout(models.Model):
         """ Workout type : Every minute on the minute for a specified number of minutes """
         return self.emom > 0
     
+    def get_step_count(self):
+        count=0
+        for round in self.rounds.all():
+            count = count + (round.nb_repeat * round.steps.count())
+        return count
+
     class Meta:
         unique_together = (('creator', 'name'),)
         permissions = (
@@ -74,6 +80,7 @@ class WorkoutProgression(models.Model):
     step = models.IntegerField(null=False, blank=False)
     user = models.ForeignKey(AUTH_USER_MODEL)
     time = models.IntegerField() # seconds
+    created_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = (('user', 'session', 'step'),)    

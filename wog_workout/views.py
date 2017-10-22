@@ -10,11 +10,13 @@ from wog.viewsets import WogViewSet
 from wog.mixins import ListMixin, RetrieveMixin, CreateMixin, UpdateMixin, DestroyMixin
 from wog_round.models import Round, Step
 from wog_round.serializers import StepReadOnlySerializer
-from wog_workout.models import Workout, WorkoutSession
-from wog_workout.serializers import (WorkoutReadOnlySerializer, WorkoutDetailSerializer,
-                                     WorkoutCreateSerializer, WorkoutUpdateSerializer,
-                                     WorkoutSessionResponseSerializer, WorkoutSessionCreateSerializer,
-                                     WorkoutSessionUpdateSerializer)
+from wog_workout.models import Workout, WorkoutSession, WorkoutProgression
+from wog_workout.serializers.workout import (WorkoutReadOnlySerializer, WorkoutDetailSerializer,
+                                             WorkoutCreateSerializer, WorkoutUpdateSerializer)
+from wog_workout.serializers.session import (WorkoutSessionResponseSerializer, WorkoutSessionCreateSerializer,
+                                             WorkoutSessionUpdateSerializer, SessionResponseSerializer)
+from wog_workout.serializers.progression import (WorkoutProgressionResponseSerializer,
+                                                 WorkoutProgressionCreateSerializer)
 
 
 ####################################################
@@ -71,7 +73,7 @@ class NestedInWorkoutViewSet(WogViewSet):
         return queryset.filter(workout=self.get_workout_id())
 
 
-class WorkoutSessionViewSet(WogViewSet, ListMixin, RetrieveMixin,
+class SessionInWorkoutViewSet(WogViewSet, ListMixin, RetrieveMixin,
                             CreateMixin, UpdateMixin, DestroyMixin):
 
     permission_classes = (IsAuthenticated, IsSessionCreatorOrReadOnly)
@@ -81,6 +83,27 @@ class WorkoutSessionViewSet(WogViewSet, ListMixin, RetrieveMixin,
     update_serializer_class = WorkoutSessionUpdateSerializer
 
     def get_queryset(self):
-        return WorkoutSession.objects.all()\
-                             .filter(workout=self.kwargs['workout_pk'])
+        return WorkoutSession.objects.filter(workout=self.kwargs['project_pk'])
                             #.prefetch_related('project_permissions', 'related_user')
+
+
+class WorkoutSessionViewSet(WogViewSet, RetrieveMixin, ListMixin):
+
+    permission_classes = (IsAuthenticated,)
+    queryset = WorkoutSession.objects.all()
+    response_serializer_class = SessionResponseSerializer
+
+    def get_queryset(self):
+        return WorkoutSession.objects.filter(permission_groups__users__in=[self.request.user])
+
+
+class WorkoutProgressionViewSet(WogViewSet, ListMixin, RetrieveMixin,
+                                CreateMixin, DestroyMixin):
+    
+    permission_classes = (IsAuthenticated,)
+    queryset = WorkoutProgression.objects.all()
+    response_serializer_class = WorkoutProgressionResponseSerializer
+    create_serializer_class = WorkoutProgressionCreateSerializer
+
+    def get_queryset(self):
+        return self.queryset.filter(session=self.kwargs['session_pk'])

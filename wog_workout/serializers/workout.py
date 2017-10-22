@@ -1,13 +1,11 @@
 from django.db.models.query_utils import Q
-from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from rest_framework.generics import get_object_or_404
 
 # from exercise.serializers import ExerciseSerializer
 from wog_round.serializers import RoundSerializer
 from wog_user.serializers import UserAccountSerializer
-from wog_workout.models import Workout, WorkoutSession
+from wog_workout.models import Workout
 
 
 class WorkoutDetailSerializer(serializers.ModelSerializer):
@@ -73,34 +71,3 @@ class WorkoutUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Workout
         fields = ('id', 'name', 'is_public')
-
-
-class WorkoutSessionResponseSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = WorkoutSession
-        fields = ('id', 'start', 'workout', 'creator')
-
-
-class WorkoutSessionCreateSerializer(serializers.ModelSerializer):
-
-    start = serializers.DateTimeField(required=False)
-
-    def validate(self, attrs):
-        attrs['workout'] = get_object_or_404(Workout, pk=self.context['view'].kwargs['workout_pk'])
-        attrs['creator'] = self.context['request'].user
-        return attrs
-
-    class Meta:
-        model = WorkoutSession
-        fields = ('start',)
-
-
-class WorkoutSessionUpdateSerializer(serializers.ModelSerializer):
-
-    start = serializers.DateTimeField()
-
-    class Meta:
-        model = WorkoutSession
-        fields = ('start',)
-
