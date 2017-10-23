@@ -1,13 +1,13 @@
 from rest_framework.exceptions import ValidationError
 
 from wog_permissions.models import WorkoutSessionPermissionGroup
-from wog_permissions.constants import (SESSION_DEFAULT_PERMISSION_ID,
-                                       SESSION_INVITED_PERMISSION_ID,
-                                       SESSION_SPECTATOR_PERMISSION_ID,
-                                       SESSION_COMPETITOR_PERMISSION_ID)
+from wog_permissions.constants import (SESSION_DEFAULT_GROUP_ID,
+                                       SESSION_INVITED_GROUP_ID,
+                                       SESSION_SPECTATOR_GROUP_ID,
+                                       SESSION_COMPETITOR_GROUP_ID)
 
 
-def get_permission_profile(session, profile_type=SESSION_DEFAULT_PERMISSION_ID):
+def get_permission_profile(session, profile_type=SESSION_DEFAULT_GROUP_ID):
     """
     Retrieve the permission group of a project
     corresponding to a specific `profile_type`.

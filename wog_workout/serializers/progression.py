@@ -3,7 +3,7 @@ import datetime as dt
 from annoying.functions import get_object_or_None
 from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, ValidationError
 
 from wog_workout.models import WorkoutSession, WorkoutProgression
 from wog_round.models import Step
@@ -32,7 +32,8 @@ class WorkoutProgressionCreateSerializer(serializers.ModelSerializer):
             attrs['time'] = 0
 
         # Control if last step of the workout have been completed
-        if attrs['step'] > session.workout.get_step_count()
+        if attrs['step'] > session.workout.get_step_count():
+            raise ValidationError('Max step already done')
 
         attrs['session'] = session
         attrs['user'] = user

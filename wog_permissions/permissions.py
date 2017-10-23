@@ -1,22 +1,33 @@
 
-from rest_framework import permissions
-from rest_framework.permissions import DjangoObjectPermissions
 from django.apps import apps
+from django.conf import settings
+from django.http import Http404
+from rest_framework import permissions
+from rest_framework.generics import get_object_or_404
+from rest_framework.permissions import DjangoObjectPermissions, IsAuthenticated
 
-from wog_workout.constants import (PERMISSION_WORKOUT_VIEW, PERMISSION_WORKOUT_ADD,
-                                  PERMISSION_WORKOUT_MODIFY, PERMISSION_WORKOUT_DELETE)
+from wog_permissions.models import WorkoutProgressionObjectPermissions
+from wog_workout.models import Workout, WorkoutSession, WorkoutProgression
 
 
-class WorkoutObjectPermissions(DjangoObjectPermissions):
-    perms_map = {
-        'GET': ['wog_workout.%s' % PERMISSION_WORKOUT_VIEW],
-        'OPTIONS': [],
-        'HEAD': [],
-        'POST': ['wog_workout.%s' % PERMISSION_WORKOUT_ADD],
-        'PUT': ['wog_workout.%s' % PERMISSION_WORKOUT_MODIFY],
-        'PATCH': ['wog_workout.%s' % PERMISSION_WORKOUT_MODIFY],
-        'DELETE': ['wog_workout.%s' % PERMISSION_WORKOUT_DELETE],
-    }
+class IsAuthorizedForProgession(IsAuthenticated):
+    """  """
+    def has_permission(self, request, view):
+        """Look for the referenced object and verify the permissions."""
+        # Verify the user is Authenticated
+        if not super().has_permission(request, view):
+            raise Http404
+
+        # Check if the referenced account exists
+        pk_kwarg = view.kwargs.get('session_pk')
+        if pk_kwarg is None:
+            # If there is no correct PK refuse unless it's Swagger
+            if settings.DEBUG and request.path == '/docs/':
+                return True
+            raise Http404
+        instance = get_object_or_404(WorkoutSession.objects.all(), pk=pk_kwarg)
+        # Verify the user has access to the account for this request method
+        return WorkoutProgressionObjectPermissions().has_object_permission(request, view, instance)
 
 
 #===============================================================================
@@ -51,38 +62,3 @@ class IsSessionCreatorOrReadOnly(permissions.BasePermission):
 
         return obj.creator == request.user\
                 or (request.method in permissions.SAFE_METHODS and obj.is_public)
-
-#===============================================================================
-# PERMISSIONS MAPPING FOR WORKOUT REQUESTS
-#===============================================================================
-
-# PERMISSION_ROUND_ADD = 'workout.add_workout_round'
-# PERMISSION_ROUND_MODIFY = 'workout.change_workout_round'
-# PERMISSION_ROUND_DELETE = 'workout.delete_workout_round'
-
-# class RoundObjectPermissions(DjangoObjectPermissions):
-#     perms_map = {
-#         'GET': [PERMISSION_WORKOUT_VIEW],
-#         'OPTIONS': [],
-#         'HEAD': [],
-#         'POST': [PERMISSION_ROUND_ADD],
-#         'PUT': [PERMISSION_ROUND_MODIFY],
-#         'PATCH': [PERMISSION_ROUND_MODIFY],
-#         'DELETE': [PERMISSION_ROUND_DELETE],
-#     }
-
-
-# PERMISSION_STEP_ADD = 'workout.add_workout_step'
-# PERMISSION_STEP_MODIFY = 'workout.change_workout_step'
-# PERMISSION_STEP_DELETE = 'workout.delete_workout_step'
-
-# class StepObjectPermissions(DjangoObjectPermissions):
-#     perms_map = {
-#         'GET': [PERMISSION_WORKOUT_VIEW],
-#         'OPTIONS': [],
-#         'HEAD': [],
-#         'POST': [PERMISSION_STEP_ADD],
-#         'PUT': [PERMISSION_STEP_MODIFY],
-#         'PATCH': [PERMISSION_STEP_MODIFY],
-#         'DELETE': [PERMISSION_STEP_DELETE],
-#     }

@@ -18,6 +18,9 @@ def create_permissions():
     auth_group.permissions.add(change_workout_permission)
     auth_group.permissions.add(delete_workout_permission)
 
+    # Every authenticated user should be authorized to create workout sessions
+    add_session_permission = Permission.objects.get(codename='add_session')
+    auth_group.permissions.add(add_session_permission)
 
 class Command(BaseCommand):
     help = 'Creates Group for authenticated user with model permission'

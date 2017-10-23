@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from wog_permissions.permissions import IsWorkoutCreatorOrReadOnly, IsSessionCreatorOrReadOnly
+from wog_permissions.permissions import IsWorkoutCreatorOrReadOnly, IsSessionCreatorOrReadOnly, IsAuthorizedForProgession
 from wog.viewsets import WogViewSet
 from wog.mixins import ListMixin, RetrieveMixin, CreateMixin, UpdateMixin, DestroyMixin
 from wog_round.models import Round, Step
@@ -73,6 +73,16 @@ class NestedInWorkoutViewSet(WogViewSet):
         return queryset.filter(workout=self.get_workout_id())
 
 
+class WorkoutSessionViewSet(WogViewSet, RetrieveMixin, ListMixin):
+    """List of all sessions available for user"""
+    permission_classes = (IsAuthenticated,)
+    queryset = WorkoutSession.objects.all()
+    response_serializer_class = SessionResponseSerializer
+
+    def get_queryset(self):
+        return WorkoutSession.objects.filter(permission_groups__users__in=[self.request.user])
+
+
 class SessionInWorkoutViewSet(WogViewSet, ListMixin, RetrieveMixin,
                             CreateMixin, UpdateMixin, DestroyMixin):
 
@@ -87,20 +97,10 @@ class SessionInWorkoutViewSet(WogViewSet, ListMixin, RetrieveMixin,
                             #.prefetch_related('project_permissions', 'related_user')
 
 
-class WorkoutSessionViewSet(WogViewSet, RetrieveMixin, ListMixin):
-
-    permission_classes = (IsAuthenticated,)
-    queryset = WorkoutSession.objects.all()
-    response_serializer_class = SessionResponseSerializer
-
-    def get_queryset(self):
-        return WorkoutSession.objects.filter(permission_groups__users__in=[self.request.user])
-
-
 class WorkoutProgressionViewSet(WogViewSet, ListMixin, RetrieveMixin,
                                 CreateMixin, DestroyMixin):
     
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, IsAuthorizedForProgession)
     queryset = WorkoutProgression.objects.all()
     response_serializer_class = WorkoutProgressionResponseSerializer
     create_serializer_class = WorkoutProgressionCreateSerializer

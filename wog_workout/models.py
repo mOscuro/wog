@@ -3,9 +3,10 @@ from django.contrib.auth.models import Group
 from django.db import models
 
 from wogether.settings import AUTH_USER_MODEL
-from wog_permissions.constants import (PERMISSION_SESSION_INVITED,
-                                       PERMISSION_SESSION_SPECTATOR,
-                                       PERMISSION_SESSION_COMPETITOR)
+from wog_permissions.constants import (PERMISSION_SESSION_VIEW,
+                                       PERMISSION_SESSION_MODIFY,
+                                       PERMISSION_PROGRESS_VIEW,
+                                       PERMISSION_PROGRESS_MODIFY)
 from wog_workout.constants import PERMISSION_WORKOUT_VIEW, PERMISSION_WORKOUT_MODIFY
 
 
@@ -64,9 +65,10 @@ class WorkoutSession(models.Model):
 
     class Meta:
         permissions = (
-            (PERMISSION_SESSION_INVITED, 'Can view session but not interact with progression'),
-            (PERMISSION_SESSION_SPECTATOR, 'Can only read progression for the session'),
-            (PERMISSION_SESSION_COMPETITOR, 'Can read, create or delete progression'),
+            (PERMISSION_SESSION_VIEW, 'Can view a workout session and its details'),
+            (PERMISSION_SESSION_MODIFY, 'Can modify a workout session and its details'),
+            (PERMISSION_PROGRESS_VIEW, 'Can view workout progressions'),
+            (PERMISSION_PROGRESS_MODIFY, 'Can add and delete workout progressions'),
         )
 
 
@@ -83,5 +85,5 @@ class WorkoutProgression(models.Model):
     created_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = (('user', 'session', 'step'),)    
+        unique_together = (('user', 'session', 'step'),)
     
