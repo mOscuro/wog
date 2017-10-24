@@ -42,7 +42,7 @@ def update_user_session_permission(
         # Nothing to do
         return
     
-    if user == session.creator and current_permission_group.profile_type == SESSION_COMPETITOR_PERMISSION_ID:
+    if user == session.creator and current_permission_group.profile_type == SESSION_COMPETITOR_GROUP_ID:
         # Cannot remove session creator from Competitor group
         raise ValidationError('Cannot remove creator from competitor group')
 

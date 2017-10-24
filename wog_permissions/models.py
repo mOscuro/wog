@@ -15,24 +15,6 @@ from wog_permissions.constants import (SESSION_DEFAULT_GROUP_ID,
                                        PERMISSION_PROGRESS_VIEW, PERMISSION_PROGRESS_MODIFY)
 
 
-class WorkoutProgressionObjectPermissions(DjangoObjectPermissions):
-    """
-    Define custom object-level permissions for the project items
-    (tasks, tasklist, etc.). Those permissions are different than the
-    ProjectObjectPermissions.
-    Depending on the request HTTP method, the user will need the
-    appropriate permission on a given project.
-    """
-    perms_map = {
-        'GET': [PERMISSION_PROGRESS_VIEW],
-        'OPTIONS': [PERMISSION_PROGRESS_VIEW],
-        'HEAD': [PERMISSION_PROGRESS_VIEW],
-        'PATCH': [PERMISSION_PROGRESS_MODIFY],
-        'POST': [PERMISSION_PROGRESS_MODIFY],
-        'PUT': [PERMISSION_PROGRESS_MODIFY],
-        'DELETE': [PERMISSION_PROGRESS_MODIFY],
-    }
-
 ####################################################
 # PERMISSION GROUPS (profiles)
 ####################################################

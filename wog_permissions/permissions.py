@@ -6,28 +6,8 @@ from rest_framework import permissions
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import DjangoObjectPermissions, IsAuthenticated
 
-from wog_permissions.models import WorkoutProgressionObjectPermissions
+from wog_permissions.constants import PERMISSION_SESSION_VIEW, PERMISSION_PROGRESS_VIEW, PERMISSION_PROGRESS_MODIFY
 from wog_workout.models import Workout, WorkoutSession, WorkoutProgression
-
-
-class IsAuthorizedForProgession(IsAuthenticated):
-    """  """
-    def has_permission(self, request, view):
-        """Look for the referenced object and verify the permissions."""
-        # Verify the user is Authenticated
-        if not super().has_permission(request, view):
-            raise Http404
-
-        # Check if the referenced account exists
-        pk_kwarg = view.kwargs.get('session_pk')
-        if pk_kwarg is None:
-            # If there is no correct PK refuse unless it's Swagger
-            if settings.DEBUG and request.path == '/docs/':
-                return True
-            raise Http404
-        instance = get_object_or_404(WorkoutSession.objects.all(), pk=pk_kwarg)
-        # Verify the user has access to the account for this request method
-        return WorkoutProgressionObjectPermissions().has_object_permission(request, view, instance)
 
 
 #===============================================================================
@@ -56,9 +36,30 @@ class IsWorkoutCreatorOrReadOnly(permissions.BasePermission):
                 or (request.method in permissions.SAFE_METHODS and workout_instance.is_public)
 
 
-class IsSessionCreatorOrReadOnly(permissions.BasePermission):
+class IsAuthorizedForWorkoutSession(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
 
-        return obj.creator == request.user\
-                or (request.method in permissions.SAFE_METHODS and obj.is_public)
+        # Only session creator can modify or delete it
+        if view.action in ['update', 'partial_update', 'destroy']:
+            return request.user == obj.creator
+        
+        if view.action in ['retrieve', 'OPTIONS', 'HEAD']:
+            return request.user.has_perm(PERMISSION_SESSION_VIEW, obj)
+
+        return view.action in ['list', 'create']
+
+
+class IsAuthorizedForWorkoutProgression(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+
+        # Only session creator can modify or delete it
+        if view.action in ['create', 'update', 'partial_update', 'destroy']:
+            return request.user.has_perm(PERMISSION_PROGRESS_MODIFY, obj.session)
+        
+        elif view.action in ['list', 'retrieve', 'OPTIONS', 'HEAD']:
+            return request.user.has_perm(PERMISSION_PROGRESS_VIEW, obj.session)
+        
+        else:
+            return False
