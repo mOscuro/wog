@@ -100,20 +100,40 @@ class SessionInWorkoutViewSet(WogViewSet, ListMixin, RetrieveMixin,
     def get_queryset(self):
         return WorkoutSession.objects.filter(workout=self.kwargs['workout_pk'],
                                              permission_groups__users__in=[self.request.user])
-        # return WorkoutSession.objects.filter(workout=self.kwargs['workout_pk'])
-                            #.prefetch_related('project_permissions', 'related_user')
 
     @detail_route(methods=['patch'], url_path='invite')
     def invite(self, request, *args, **kwargs):
+        """Invite another user to join on a specific workout session"""
         session = self.get_object()
 
         # Get invited user
-        invited_user = get_object_or_404(User, request.data.get('member', None))
-
+        invited_user = get_object_or_404(User, id=request.data.get('user', None))
         update_user_session_permission(invited_user, session, SESSION_INVITED_GROUP_ID)
 
         return self.get_response(status.HTTP_200_OK)
 
+    @detail_route(methods=['patch'], url_path='watch')
+    def watch(self, request, *args, **kwargs):
+        """
+        Invited users can go in the spectator group, even if session is private.
+        Any authenticated user can go to spectator group if session is public.
+        """
+        pass
+
+    @detail_route(methods=['patch'], url_path='compete')
+    def compete(self, request, *args, **kwargs):
+        """
+        Invited users can go in the competitor group, even if session is private.
+        Any authenticated user can go to competitor group if session is public.
+        """
+        pass
+
+    @detail_route(methods=['patch'], url_path='quit')
+    def quit(self, request, *args, **kwargs):
+        """
+        Any user can quit the group he's in, except session creator.
+        """
+        pass
 
 class WorkoutProgressionViewSet(WogViewSet, ListMixin, RetrieveMixin,
                                 CreateMixin, DestroyMixin):

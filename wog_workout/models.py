@@ -62,6 +62,7 @@ class WorkoutSession(models.Model):
     creator = models.ForeignKey(AUTH_USER_MODEL, related_name='sessions')
     created_at = models.DateTimeField(auto_now=True)
     start = models.DateTimeField(default=None, null=True, blank=True)
+    is_public = models.BooleanField(default=False)
 
     class Meta:
         permissions = (
