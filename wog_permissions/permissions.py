@@ -54,10 +54,10 @@ class IsAuthorizedForWorkoutSession(permissions.BasePermission):
 
         # To be authorize to execute session of workout, user needs to be in invited group. Or session is public.
         if view.action in ['compete', 'watch']:
-            get_permission_profile(obj, SESSION_INVITED_GROUP_ID)
-            return request.user.session_permissions.filter(session=obj).exists() or obj.is_public
+            return obj.is_public or\
+                   request.user.session_permissions.filter(session=obj, profile_type=SESSION_INVITED_GROUP_ID).exists()
 
-        # Only session creator can modify or delete it
+        # Only session creator can modify, delete it or invite other users to join
         if view.action in ['update', 'partial_update', 'destroy', 'invite']:
             return request.user == obj.creator
         

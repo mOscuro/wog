@@ -21,6 +21,9 @@ def get_permission_profile(session, profile_type=SESSION_DEFAULT_GROUP_ID):
         group.assign_perms()
     return group
 
+def get_user_current_session_group(user: 'User', session: 'WorkoutSession'):
+    return user.session_permissions.filter(session=session).first()
+
 def delete_user_permission(user: 'User', permission_group: WorkoutSessionPermissionGroup) -> None:
     """Remove the django object-permission from the User on the given Session."""
     if user and permission_group:

@@ -10,8 +10,8 @@ from wog_permissions.permissions import IsWorkoutCreatorOrReadOnly, IsAuthorized
 from wog.viewsets import WogViewSet
 from wog.mixins import ListMixin, RetrieveMixin, CreateMixin, UpdateMixin, DestroyMixin
 
-from wog_permissions.constants import SESSION_INVITED_GROUP_ID, SESSION_COMPETITOR_GROUP_ID
-from wog_permissions.helpers import update_user_session_permission
+from wog_permissions.constants import SESSION_INVITED_GROUP_ID, SESSION_COMPETITOR_GROUP_ID, SESSION_SPECTATOR_GROUP_ID
+from wog_permissions.helpers import get_user_current_session_group, delete_user_permission, update_user_session_permission
 from wog_round.models import Round, Step
 from wog_round.serializers import StepReadOnlySerializer
 from wog_workout.models import Workout, WorkoutSession, WorkoutProgression
@@ -118,7 +118,11 @@ class SessionInWorkoutViewSet(WogViewSet, ListMixin, RetrieveMixin,
         Invited users can go in the spectator group, even if session is private.
         Any authenticated user can go to spectator group if session is public.
         """
-        pass
+        session = self.get_object()
+        update_user_session_permission(request.user, session, SESSION_SPECTATOR_GROUP_ID)
+
+        return self.get_response(status.HTTP_200_OK)
+
 
     @detail_route(methods=['patch'], url_path='compete')
     def compete(self, request, *args, **kwargs):
@@ -126,14 +130,21 @@ class SessionInWorkoutViewSet(WogViewSet, ListMixin, RetrieveMixin,
         Invited users can go in the competitor group, even if session is private.
         Any authenticated user can go to competitor group if session is public.
         """
-        pass
+        session = self.get_object()
+        update_user_session_permission(request.user, session, SESSION_COMPETITOR_GROUP_ID)
+
+        return self.get_response(status.HTTP_200_OK)
 
     @detail_route(methods=['patch'], url_path='quit')
     def quit(self, request, *args, **kwargs):
         """
         Any user can quit the group he's in, except session creator.
         """
-        pass
+        session = self.get_object()
+        user_group = get_user_current_session_group(request.user, session)
+        delete_user_permission(request.user, user_group)
+
+        return self.get_response(status.HTTP_200_OK)
 
 class WorkoutProgressionViewSet(WogViewSet, ListMixin, RetrieveMixin,
                                 CreateMixin, DestroyMixin):
