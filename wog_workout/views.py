@@ -1,18 +1,27 @@
 from django.db.models.query_utils import Q
 from rest_framework import mixins, filters, viewsets, status
+from rest_framework.decorators import detail_route
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from wog_workout.permissions import IsWorkoutCreatorOrReadOnly
+from wog_permissions.permissions import IsWorkoutCreatorOrReadOnly, IsAuthorizedForWorkoutSession, IsAuthorizedForWorkoutProgression
 from wog.viewsets import WogViewSet
 from wog.mixins import ListMixin, RetrieveMixin, CreateMixin, UpdateMixin, DestroyMixin
+
+from wog_permissions.constants import SESSION_INVITED_GROUP_ID, SESSION_COMPETITOR_GROUP_ID, SESSION_SPECTATOR_GROUP_ID
+from wog_permissions.helpers import get_user_current_session_group, delete_user_permission, update_user_session_permission
 from wog_round.models import Round, Step
 from wog_round.serializers import StepReadOnlySerializer
-from wog_workout.models import Workout
-from wog_workout.serializers import WorkoutReadOnlySerializer, WorkoutDetailSerializer, \
-WorkoutCreateSerializer, WorkoutUpdateSerializer
+from wog_workout.models import Workout, WorkoutSession, WorkoutProgression
+from wog_workout.serializers.workout import (WorkoutReadOnlySerializer, WorkoutDetailSerializer,
+                                             WorkoutCreateSerializer, WorkoutUpdateSerializer)
+from wog_workout.serializers.session import (WorkoutSessionResponseSerializer, WorkoutSessionCreateSerializer,
+                                             WorkoutSessionUpdateSerializer, SessionResponseSerializer)
+from wog_workout.serializers.progression import (WorkoutProgressionResponseSerializer,
+                                                 WorkoutProgressionCreateSerializer)
+from wog_user.models import User
 
 
 ####################################################
@@ -67,3 +76,95 @@ class NestedInWorkoutViewSet(WogViewSet):
 
     def filter_on_workout(self, queryset):
         return queryset.filter(workout=self.get_workout_id())
+
+
+class WorkoutSessionViewSet(WogViewSet, RetrieveMixin, ListMixin):
+    """List of all sessions available for user"""
+    permission_classes = (IsAuthenticated,)
+    queryset = WorkoutSession.objects.all()
+    response_serializer_class = SessionResponseSerializer
+
+    def get_queryset(self):
+        return WorkoutSession.objects.filter(permission_groups__users__in=[self.request.user])
+
+
+class SessionInWorkoutViewSet(WogViewSet, ListMixin, RetrieveMixin,
+                            CreateMixin, UpdateMixin, DestroyMixin):
+
+    permission_classes = (IsAuthenticated, IsAuthorizedForWorkoutSession)
+    serializer_class = WorkoutSessionResponseSerializer
+    response_serializer_class = WorkoutSessionResponseSerializer
+    create_serializer_class = WorkoutSessionCreateSerializer
+    update_serializer_class = WorkoutSessionUpdateSerializer
+
+    def get_queryset(self):
+        return WorkoutSession.objects.filter(workout=self.kwargs['workout_pk'],
+                                             permission_groups__users__in=[self.request.user])
+
+    @detail_route(methods=['patch'], url_path='invite')
+    def invite(self, request, *args, **kwargs):
+        """Invite another user to join on a specific workout session"""
+        session = self.get_object()
+
+        # Get invited user
+        invited_user = get_object_or_404(User, id=request.data.get('user', None))
+        update_user_session_permission(invited_user, session, SESSION_INVITED_GROUP_ID)
+
+        return self.get_response(status.HTTP_200_OK)
+
+    @detail_route(methods=['patch'], url_path='watch')
+    def watch(self, request, *args, **kwargs):
+        """
+        Invited users can go in the spectator group, even if session is private.
+        Any authenticated user can go to spectator group if session is public.
+        """
+        session = self.get_object()
+        update_user_session_permission(request.user, session, SESSION_SPECTATOR_GROUP_ID)
+
+        return self.get_response(status.HTTP_200_OK)
+
+
+    @detail_route(methods=['patch'], url_path='compete')
+    def compete(self, request, *args, **kwargs):
+        """
+        Invited users can go in the competitor group, even if session is private.
+        Any authenticated user can go to competitor group if session is public.
+        """
+        session = self.get_object()
+        update_user_session_permission(request.user, session, SESSION_COMPETITOR_GROUP_ID)
+
+        return self.get_response(status.HTTP_200_OK)
+
+    @detail_route(methods=['patch'], url_path='quit')
+    def quit(self, request, *args, **kwargs):
+        """
+        Any user can quit the group he's in, except session creator.
+        """
+        session = self.get_object()
+        user_group = get_user_current_session_group(request.user, session)
+        delete_user_permission(request.user, user_group)
+
+        return self.get_response(status.HTTP_200_OK)
+
+class WorkoutProgressionViewSet(WogViewSet, ListMixin, RetrieveMixin,
+                                CreateMixin, DestroyMixin):
+    
+    permission_classes = (IsAuthenticated, IsAuthorizedForWorkoutProgression)
+    queryset = WorkoutProgression.objects.all()
+    serializer_class = WorkoutProgressionResponseSerializer
+    response_serializer_class = WorkoutProgressionResponseSerializer
+    create_serializer_class = WorkoutProgressionCreateSerializer
+
+    def get_queryset(self):
+        return self.queryset.filter(session=self.kwargs['session_pk'])
+
+    @detail_route(methods=['patch'], url_path='invite')
+    def invite(self, request, *args, **kwargs):
+        session = self.get_object()
+
+        # Get invited user
+        invited_user = get_object_or_404(User, request.data.get('user', None))
+
+        update_user_session_permission(invited_user, session, SESSION_INVITED_GROUP_ID)
+
+        return self.get_response(status.HTTP_200_OK)

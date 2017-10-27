@@ -1,7 +1,12 @@
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth.models import Group
 from django.db import models
 
 from wogether.settings import AUTH_USER_MODEL
+from wog_permissions.constants import (PERMISSION_SESSION_VIEW,
+                                       PERMISSION_SESSION_MODIFY,
+                                       PERMISSION_PROGRESS_VIEW,
+                                       PERMISSION_PROGRESS_MODIFY)
 from wog_workout.constants import PERMISSION_WORKOUT_VIEW, PERMISSION_WORKOUT_MODIFY
 
 
@@ -33,6 +38,12 @@ class Workout(models.Model):
         """ Workout type : Every minute on the minute for a specified number of minutes """
         return self.emom > 0
     
+    def get_step_count(self):
+        count=0
+        for round in self.rounds.all():
+            count = count + (round.nb_repeat * round.steps.count())
+        return count
+
     class Meta:
         unique_together = (('creator', 'name'),)
         permissions = (
@@ -40,27 +51,40 @@ class Workout(models.Model):
         )
 
     
-class Session(models.Model):
+class WorkoutSession(models.Model):
     """
     - A Session materialize the execution of a workout.
     - It can be seen as a pool where one or more athletes wait for the workout to start
     - A session can be planned hours or days before the beginning of the workout,
         in order to wait for other athlete than the creator to join in
     """
-    workout = models.ForeignKey(Workout, on_delete=models.CASCADE)
+    workout = models.ForeignKey('Workout', on_delete=models.CASCADE, related_name='session_groups')
     creator = models.ForeignKey(AUTH_USER_MODEL, related_name='sessions')
-    date = models.DateTimeField()
-    users = models.ManyToManyField(AUTH_USER_MODEL, related_name='athletes')
+    created_at = models.DateTimeField(auto_now=True)
+    start = models.DateTimeField(default=None, null=True, blank=True)
+    is_public = models.BooleanField(default=False)
+
+    class Meta:
+        permissions = (
+            (PERMISSION_SESSION_VIEW, 'Can view a workout session and its details'),
+            (PERMISSION_SESSION_MODIFY, 'Can modify a workout session and its details'),
+            (PERMISSION_PROGRESS_VIEW, 'Can view workout progressions'),
+            (PERMISSION_PROGRESS_MODIFY, 'Can add and delete workout progressions'),
+        )
 
 
-class Progression(models.Model):
+class WorkoutProgression(models.Model):
     """
     - The Progression follows where an athlete is at, during a workout
     - It logs the time the athlete took to complete each step of a workout
     - The Progression will be used to update every athlete's leaderboard during a workout in "competition mode"
     """
-    session = models.ForeignKey(Session)
-    step = models.ForeignKey('wog_round.Step')
+    session = models.ForeignKey('WorkoutSession')
+    step = models.IntegerField(null=False, blank=False)
     user = models.ForeignKey(AUTH_USER_MODEL)
     time = models.IntegerField() # seconds
+    created_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = (('user', 'session', 'step'),)
     

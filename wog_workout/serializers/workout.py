@@ -1,5 +1,4 @@
 from django.db.models.query_utils import Q
-from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -56,6 +55,7 @@ class WorkoutUpdateSerializer(serializers.ModelSerializer):
     Used to edit infos of a workout (name, visibility, time_cap....)
     """
     name = serializers.CharField(required=False)
+    is_public = serializers.BooleanField(required=False)
     
     def validate(self, attrs):
         user = self.context['request'].user
@@ -70,5 +70,4 @@ class WorkoutUpdateSerializer(serializers.ModelSerializer):
                 
     class Meta:
         model = Workout
-        fields = ('id', 'name', 'is_public')    
-
+        fields = ('id', 'name', 'is_public')
