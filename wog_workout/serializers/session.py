@@ -22,6 +22,7 @@ class WorkoutSessionCreateSerializer(serializers.ModelSerializer):
     start = serializers.DateTimeField(required=False)
 
     def validate(self, attrs):
+        print('nul')
         attrs['workout'] = get_object_or_404(Workout, pk=self.context['view'].kwargs['workout_pk'])
         attrs['creator'] = self.context['request'].user
         return attrs

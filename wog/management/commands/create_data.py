@@ -13,6 +13,28 @@ from wog_user.models import User
 from wog_workout.models import Workout
 
 
+def create_equipments():
+    barbell = Equipment.objects.create(name="Barbell")
+    dumbell = Equipment.objects.create(name="Dumbell")
+    jumprope = Equipment.objects.create(name="Jump Rope")
+
+def create_exercises():
+    burpees = Exercise.objects.create(name="Burpees", level=AMATEUR, type=BODYWEIGHT)
+    air_squats = Exercise.objects.create(name="Air Squats", level=AMATEUR, type=BODYWEIGHT)
+    lunges = Exercise.objects.create(name="Lunges", level=AMATEUR, type=BODYWEIGHT)
+    situps = Exercise.objects.create(name="Situps", level=AMATEUR, type=BODYWEIGHT)
+    leg_levers = Exercise.objects.create(name="Leg Levers", level=AMATEUR, type=BODYWEIGHT)
+    standups = Exercise.objects.create(name="Standups", level=MEDIUM, type=BODYWEIGHT)
+    climbers = Exercise.objects.create(name="Climbers", level=AMATEUR, type=BODYWEIGHT)
+    jumps = Exercise.objects.create(name="Jumps", level=AMATEUR, type=BODYWEIGHT)
+    pushups = Exercise.objects.create(name="Pushups", level=AMATEUR, type=BODYWEIGHT)
+    pullups = Exercise.objects.create(name="Pullups", level=MEDIUM, type=BODYWEIGHT)
+    running = Exercise.objects.create(name="Running", level=AMATEUR, type=BODYWEIGHT)
+
+    double_unders = Exercise.objects.create(name="Double Unders", level=MEDIUM, type=CROSSTRAINING, equipment=jumprope)
+    dumbell_deadlift = Exercise.objects.create(name="Dumbell Deadlift", level=MEDIUM, type=CROSSTRAINING, equipment=dumbell)
+    dumbell_front_squat = Exercise.objects.create(name="Dumbell Front Squat", level=MEDIUM, type=CROSSTRAINING, equipment=dumbell)
+
 class Command(BaseCommand):
     
     help = 'Populates the database (used during development)'
@@ -53,29 +75,13 @@ class Command(BaseCommand):
         # CREATE SOME EQUIPMENTS
         #=======================================================================
         print("Creating some equiments...")
-        barbell = Equipment.objects.create(name="Barbell")
-        dumbell = Equipment.objects.create(name="Dumbell")
-        jumprope = Equipment.objects.create(name="Jump Rope")
+        create_equipments()
 
         #=======================================================================
         # CREATE SOME EXERCISES
         #=======================================================================
         print("Creating some exercises...")
-        burpees = Exercise.objects.create(name="Burpees", level=AMATEUR, type=BODYWEIGHT)
-        air_squats = Exercise.objects.create(name="Air Squats", level=AMATEUR, type=BODYWEIGHT)
-        lunges = Exercise.objects.create(name="Lunges", level=AMATEUR, type=BODYWEIGHT)
-        situps = Exercise.objects.create(name="Situps", level=AMATEUR, type=BODYWEIGHT)
-        leg_levers = Exercise.objects.create(name="Leg Levers", level=AMATEUR, type=BODYWEIGHT)
-        standups = Exercise.objects.create(name="Standups", level=MEDIUM, type=BODYWEIGHT)
-        climbers = Exercise.objects.create(name="Climbers", level=AMATEUR, type=BODYWEIGHT)
-        jumps = Exercise.objects.create(name="Jumps", level=AMATEUR, type=BODYWEIGHT)
-        pushups = Exercise.objects.create(name="Pushups", level=AMATEUR, type=BODYWEIGHT)
-        pullups = Exercise.objects.create(name="Pullups", level=MEDIUM, type=BODYWEIGHT)
-        running = Exercise.objects.create(name="Running", level=AMATEUR, type=BODYWEIGHT)
-
-        double_unders = Exercise.objects.create(name="Double Unders", level=MEDIUM, type=CROSSTRAINING, equipment=jumprope)
-        dumbell_deadlift = Exercise.objects.create(name="Dumbell Deadlift", level=MEDIUM, type=CROSSTRAINING, equipment=dumbell)
-        dumbell_front_squat = Exercise.objects.create(name="Dumbell Front Squat", level=MEDIUM, type=CROSSTRAINING, equipment=dumbell)
+        create_exercises()
 
         #=======================================================================
         # ADMINISTRATORS WORKOUTS

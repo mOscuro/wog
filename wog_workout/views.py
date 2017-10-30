@@ -97,6 +97,11 @@ class SessionInWorkoutViewSet(WogViewSet, ListMixin, RetrieveMixin,
     create_serializer_class = WorkoutSessionCreateSerializer
     update_serializer_class = WorkoutSessionUpdateSerializer
 
+    # def get_object(self):
+    #     instance = super().get_object()
+    #     # self.check_object_permissions(self.request, instance)
+    #     return instance
+
     def get_queryset(self):
         return WorkoutSession.objects.filter(workout=self.kwargs['workout_pk'],
                                              permission_groups__users__in=[self.request.user])

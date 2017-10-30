@@ -94,7 +94,7 @@
             "type": "python",
             "request": "launch",
             "stopOnEntry": false,
-            "pythonPath": "C:/WOG/wog_api/env/Scripts/python",
+            "pythonPath": "C:/WOG/wog_env/Scripts/python",
             "program": "${workspaceRoot}/manage.py",
             "cwd": "${workspaceRoot}",
             "args": [
@@ -121,7 +121,7 @@
             "cwd": "${workspaceRoot}",
             "args": [
                 "test",
-                "wog_workout.tests.test_permissions.WorkoutPermissionsTestCase"
+                "wog_workout.tests.test_session_permissions"
             ],
             "env": null,
             "envFile": "${workspaceRoot}/.env",
