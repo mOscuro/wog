@@ -96,7 +96,6 @@ def get_workout_session_list(client, workout_pk: int, user=None):
     return client.get(get_workout_session_list_url(workout_pk))
 
 def get_workout_session_detail_url(workout_pk: int, session_pk: int):
-    print(reverse('workout-sessions-detail', kwargs={'workout_pk': workout_pk, 'pk': session_pk}))
     return reverse('workout-sessions-detail', kwargs={'workout_pk': workout_pk, 'pk': session_pk})
 
 def get_workout_session_detail(client, workout_pk: int, session_pk: int, user=None):

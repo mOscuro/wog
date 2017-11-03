@@ -9,6 +9,7 @@ from guardian.shortcuts import assign_perm, remove_perm
 from rest_framework.test import APIClient, APITestCase
 
 from wog.management.commands.create_permissions import create_permissions
+from wog.management.commands.create_data import init_catalog
 from wog_workout.models import Workout
 from wog_user.models import User
 
@@ -67,7 +68,7 @@ class WogetherTestCase(TestCase, WogetherTestMixin):
 
     def setUp(self):
         create_permissions()
-
+        init_catalog()
 
 class WogetherAPITestCase(APITestCase, WogetherTestMixin):
     client_class = APIClient
@@ -77,4 +78,5 @@ class WogetherAPITestCase(APITestCase, WogetherTestMixin):
 
     def setUp(self):
         create_permissions()
+        init_catalog()
 

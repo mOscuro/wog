@@ -81,6 +81,14 @@ class TaskActionApiListTestsCase(WorkoutBaseApiTestsCase):
                          "WorkoutList API should support POST.")
         self.assertEqual(Workout.objects.all().count(), workout_count + 1)
 
+    def test_workout_api_detail_post_same_name(self):
+        """Not possible for a user to create 2 workouts with same name."""
+        self.client.force_authenticate(user=self.user1)
+        response = self.client.post(get_workout_list_url(),
+                                    data={"name": self.workout1.name}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST,
+                         "Not possible for a user to create 2 workouts with same name.")
+
 
 class WorkoutApiDetailTestsCase(WorkoutBaseApiTestsCase):
 
@@ -107,6 +115,7 @@ class WorkoutApiDetailTestsCase(WorkoutBaseApiTestsCase):
         response = self.client.patch(get_workout_detail_url(self.workout1),
                                     data={"name": "new_name"}, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK, "WorkoutDetail API should support PATCH.")
+        self.assertEqual(Workout.objects.get(id=self.workout1.id).name, 'new_name')
 
     def test_workout_api_detail_delete(self):
         """ WorkoutDetail API should support DELETE."""
@@ -131,13 +140,6 @@ class WorkoutApiDetailTestsCase(WorkoutBaseApiTestsCase):
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED,
                          "WorkoutDetail API should not support POST.")
 
-    def test_workout_api_detail_post_same_name(self):
-        """Not possible for a user to create 2 workouts with same name."""
-        self.client.force_authenticate(user=self.user1)
-        response = self.client.post(get_workout_detail_url(self.workout1),
-                                    data={"name": self.workout1.name}, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST,
-                         "Not possible for a user to create 2 workouts with same name.")
 
 ####################################################
 # Utilities for this file's tests

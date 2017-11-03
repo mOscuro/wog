@@ -121,7 +121,7 @@
             "cwd": "${workspaceRoot}",
             "args": [
                 "test",
-                "wog_workout.tests.test_session_permissions"
+                "wog_workout"
             ],
             "env": null,
             "envFile": "${workspaceRoot}/.env",

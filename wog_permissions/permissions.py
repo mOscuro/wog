@@ -22,8 +22,6 @@ class IsWorkoutCreatorOrReadOnly(permissions.BasePermission):
     """
     def has_object_permission(self, request, view, obj):
 
-        print("####################################################")
-        print('Workout Permission check')
         # For Workout Viewset
         if isinstance(obj, apps.get_model('wog_workout', 'Workout')):
             workout_instance = obj
@@ -48,7 +46,6 @@ class IsAuthorizedForWorkoutSession(permissions.BasePermission):
         Any user can access create a session on a public workout.
         """
 
-        print('IsAuthorizedForWorkoutSession : has_permission')
         if view.action in ['create', 'list', 'retrieve']:
             if 'workout_pk' in view.kwargs:
                 workout = Workout.objects.get(id=view.kwargs['workout_pk'])
@@ -64,7 +61,6 @@ class IsAuthorizedForWorkoutSession(permissions.BasePermission):
         - Specific view exists to let user quit groups.
         """
 
-        print('IsAuthorizedForWorkoutSession : has_object_permission')
         # Only spectator, competitor or invited user can quit session. Session creator cannot quit.
         if view.action in ['quit']:
             return request.user.session_permissions.filter(session=obj).exists() and request.user != obj.creator
