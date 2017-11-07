@@ -45,8 +45,7 @@ class IsAuthorizedForWorkoutSession(permissions.BasePermission):
         Only workout creator can get related sessions or create a new one if workout is private
         Any user can access create a session on a public workout.
         """
-
-        if view.action in ['create', 'list', 'retrieve']:
+        if view.action in ['create']:
             if 'workout_pk' in view.kwargs:
                 workout = Workout.objects.get(id=view.kwargs['workout_pk'])
                 return request.user == workout.creator or workout.is_public
@@ -60,7 +59,6 @@ class IsAuthorizedForWorkoutSession(permissions.BasePermission):
         - Other users can join as well but only if session is public.
         - Specific view exists to let user quit groups.
         """
-
         # Only spectator, competitor or invited user can quit session. Session creator cannot quit.
         if view.action in ['quit']:
             return request.user.session_permissions.filter(session=obj).exists() and request.user != obj.creator
@@ -81,6 +79,21 @@ class IsAuthorizedForWorkoutSession(permissions.BasePermission):
 
 
 class IsAuthorizedForWorkoutProgression(permissions.BasePermission):
+    def has_permission(self, request, view):
+        """
+        Users in spectator group have only PERMISSION_PROGRESS_VIEW on session.
+        Users in competitor group have PERMISSION_PROGRESS_VIEW and PERMISSION_PROGRESS_MODIFY on session.
+        """
+        if view.action in ['list', 'create']:
+            if 'session_pk' in view.kwargs:
+                session = WorkoutSession.objects.get(id=view.kwargs['session_pk'])
+                
+                if view.action == 'list':
+                    return request.user.has_perm(PERMISSION_PROGRESS_VIEW, session)
+                if view.action == 'create':
+                    return request.user.has_perm(PERMISSION_PROGRESS_MODIFY, session)
+        
+        return True
 
     def has_object_permission(self, request, view, obj):
 

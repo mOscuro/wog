@@ -10,7 +10,7 @@ from rest_framework.test import APIClient, APITestCase
 
 from wog.management.commands.create_permissions import create_permissions
 from wog.management.commands.create_data import init_catalog
-from wog_workout.models import Workout
+from wog_workout.models import Workout, WorkoutSession
 from wog_user.models import User
 
 
@@ -59,7 +59,14 @@ class WogetherTestMixin:
                                       creator=kwargs.get('creator', None),
                                       is_active=kwargs.get('is_active', True),
                                       is_staff=kwargs.get('is_staff', False),
-                                      is_public=kwargs.get('is_public', False))\
+                                      is_public=kwargs.get('is_public', False))
+
+    @classmethod
+    def create_session(cls, **kwargs):
+        return WorkoutSession.objects.create(workout=kwargs.get('workout', None),
+                                             creator=kwargs.get('creator', None),
+                                             start=kwargs.get('start', None),
+                                             is_public=kwargs.get('is_public', False))
 
 class WogetherTestCase(TestCase, WogetherTestMixin):
 

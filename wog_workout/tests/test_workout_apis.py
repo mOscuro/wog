@@ -14,7 +14,7 @@ class WorkoutBaseApiTestsCase(WogetherAPITestCase):
         self.workout1 = self.create_workout(name='user1_workout1', creator=self.user1)
 
 
-class TaskActionApiListTestsCase(WorkoutBaseApiTestsCase):
+class WorkoutApiListTestsCase(WorkoutBaseApiTestsCase):
 
     def setUp(self):
         super().setUp()

@@ -4,7 +4,7 @@ from rest_framework.decorators import detail_route
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework.generics import RetrieveAPIView
 
 from wog_permissions.permissions import IsWorkoutCreatorOrReadOnly, IsAuthorizedForWorkoutSession, IsAuthorizedForWorkoutProgression
 from wog.viewsets import WogViewSet
@@ -147,9 +147,17 @@ class SessionInWorkoutViewSet(WogViewSet, ListMixin, RetrieveMixin,
         """
         session = self.get_object()
         user_group = get_user_current_session_group(request.user, session)
+        user_group.users.remove(request.user)
         delete_user_permission(request.user, user_group)
 
         return self.get_response(status.HTTP_200_OK)
+
+class WorkoutSessionLeaderboardView(WogViewSet, ListMixin):
+
+    def list(self, request, *args, **kwargs):
+        
+        return self.get_response(status.HTTP_200_OK)
+
 
 class WorkoutProgressionViewSet(WogViewSet, ListMixin, RetrieveMixin,
                                 CreateMixin, DestroyMixin):
@@ -163,13 +171,3 @@ class WorkoutProgressionViewSet(WogViewSet, ListMixin, RetrieveMixin,
     def get_queryset(self):
         return self.queryset.filter(session=self.kwargs['session_pk'])
 
-    @detail_route(methods=['patch'], url_path='invite')
-    def invite(self, request, *args, **kwargs):
-        session = self.get_object()
-
-        # Get invited user
-        invited_user = get_object_or_404(User, request.data.get('user', None))
-
-        update_user_session_permission(invited_user, session, SESSION_INVITED_GROUP_ID)
-
-        return self.get_response(status.HTTP_200_OK)
