@@ -1,0 +1,8 @@
+[ ] Any authenticated user can create a workout
+[ ] Only workout creator can update/delete it
+[ ] Only workout creator can create/update/delete a round on it
+[ ] Only workout creator can create/update/delete a step on it
+
+[ ] Only workout creator can see it if not public
+[ ] Any authenticated user can see workout if public
+[ ] Users can see public workouts of other users they follow

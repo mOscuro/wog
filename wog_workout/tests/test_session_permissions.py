@@ -8,7 +8,7 @@ from wog_permissions.constants import SESSION_INVITED_GROUP_ID, SESSION_SPECTATO
 from wog_permissions.helpers import get_permission_profile, update_user_session_permission
 
 
-class WorkoutSessionPermissionApiDetailTestsCase(WogetherAPITestCase):
+class WorkoutSessionPermissionApiTestsCase(WogetherAPITestCase):
     """
     Test WorkoutSession permissions:
     Only Session creator can update or delete it, and invite other users.
@@ -82,7 +82,7 @@ class WorkoutSessionPermissionApiDetailTestsCase(WogetherAPITestCase):
 
 
 class WorkoutSessionSocialApiTestsCase(WogetherAPITestCase):
-
+    """Test Social scenarios on workout session : invite, watch, compete and quit."""
     def setUp(self):
         super().setUp()
         self.user1 = self.create_user(1)
