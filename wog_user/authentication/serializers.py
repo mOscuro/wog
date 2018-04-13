@@ -50,6 +50,7 @@ class TokenSerializer(serializers.Serializer):
     email = serializers.EmailField(source='user.email')
     first_name = serializers.CharField(source='user.first_name')
     last_name = serializers.CharField(source='user.last_name')
+    id = serializers.CharField(source='user.id')
     # preferences = UserPreferenceSerializer(source='user.preference')
     # profile = UserProfileSerializer(source='user.profile')
 

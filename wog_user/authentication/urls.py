@@ -1,7 +1,7 @@
 from django.conf.urls import url
 
 from wog_user.authentication.views import UserDetailsView, PasswordResetView,\
-    PasswordResetConfirmView, LoginView, LogoutView, PasswordChangeView
+    PasswordResetConfirmView, LoginView, LogoutView, PasswordChangeView, LogoutAllView
 
 
 urlpatterns = [
@@ -22,6 +22,10 @@ urlpatterns = [
     url(r'^logout/$',
         LogoutView.as_view(),
         name='rest_logout'),
+
+    url(r'^logout-all/$',
+        LogoutAllView.as_view(),
+        name='rest_logout_all'),
 
     url(r'^user/$',
         UserDetailsView.as_view(),
