@@ -94,12 +94,12 @@
             "type": "python",
             "request": "launch",
             "stopOnEntry": false,
-            "pythonPath": "C:/WOG/wog_api/env/Scripts/python",
+            "pythonPath": "C:/WOG/wog_env/Scripts/python",
             "program": "${workspaceRoot}/manage.py",
             "cwd": "${workspaceRoot}",
             "args": [
                 "runserver",
-                "0.0.0.0:8000",
+                "0.0.0.0:8085",
                 "--noreload"
             ],
             "env": null,
@@ -121,7 +121,7 @@
             "cwd": "${workspaceRoot}",
             "args": [
                 "test",
-                "wog_workout.tests.test_permissions.WorkoutPermissionsTestCase"
+                "wog_workout.tests.test_session_permissions.WorkoutSessionSocialApiTestsCase"
             ],
             "env": null,
             "envFile": "${workspaceRoot}/.env",

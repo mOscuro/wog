@@ -18,7 +18,6 @@ def give_user_session_permissions(sender, instance, **kwargs):
     """
     if kwargs.get('created', True):
         # Create the ProjectPermissionGroup for every type of group
-        print('WorkoutSession created')
         get_permission_profile(instance, SESSION_INVITED_GROUP_ID)
         get_permission_profile(instance, SESSION_SPECTATOR_GROUP_ID)
         competitor_group = get_permission_profile(instance, SESSION_COMPETITOR_GROUP_ID)

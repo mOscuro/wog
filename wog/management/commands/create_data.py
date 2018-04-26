@@ -13,6 +13,27 @@ from wog_user.models import User
 from wog_workout.models import Workout
 
 
+def init_catalog():
+    barbell = Equipment.objects.create(name="Barbell")
+    dumbell = Equipment.objects.create(name="Dumbell")
+    jumprope = Equipment.objects.create(name="Jump Rope")
+
+    Exercise.objects.create(name="Burpees", level=AMATEUR, type=BODYWEIGHT)
+    Exercise.objects.create(name="Air Squats", level=AMATEUR, type=BODYWEIGHT)
+    Exercise.objects.create(name="Lunges", level=AMATEUR, type=BODYWEIGHT)
+    Exercise.objects.create(name="Situps", level=AMATEUR, type=BODYWEIGHT)
+    Exercise.objects.create(name="Leg Levers", level=AMATEUR, type=BODYWEIGHT)
+    Exercise.objects.create(name="Standups", level=MEDIUM, type=BODYWEIGHT)
+    Exercise.objects.create(name="Climbers", level=AMATEUR, type=BODYWEIGHT)
+    Exercise.objects.create(name="Jumps", level=AMATEUR, type=BODYWEIGHT)
+    Exercise.objects.create(name="Pushups", level=AMATEUR, type=BODYWEIGHT)
+    Exercise.objects.create(name="Pullups", level=MEDIUM, type=BODYWEIGHT)
+    Exercise.objects.create(name="Running", level=AMATEUR, type=BODYWEIGHT)
+
+    Exercise.objects.create(name="Double Unders", level=MEDIUM, type=CROSSTRAINING, equipment=jumprope)
+    Exercise.objects.create(name="Dumbell Deadlift", level=MEDIUM, type=CROSSTRAINING, equipment=dumbell)
+    Exercise.objects.create(name="Dumbell Front Squat", level=MEDIUM, type=CROSSTRAINING, equipment=dumbell)
+
 class Command(BaseCommand):
     
     help = 'Populates the database (used during development)'
@@ -53,6 +74,7 @@ class Command(BaseCommand):
         # CREATE SOME EQUIPMENTS
         #=======================================================================
         print("Creating some equiments...")
+
         barbell = Equipment.objects.create(name="Barbell")
         dumbell = Equipment.objects.create(name="Dumbell")
         jumprope = Equipment.objects.create(name="Jump Rope")
@@ -61,6 +83,7 @@ class Command(BaseCommand):
         # CREATE SOME EXERCISES
         #=======================================================================
         print("Creating some exercises...")
+
         burpees = Exercise.objects.create(name="Burpees", level=AMATEUR, type=BODYWEIGHT)
         air_squats = Exercise.objects.create(name="Air Squats", level=AMATEUR, type=BODYWEIGHT)
         lunges = Exercise.objects.create(name="Lunges", level=AMATEUR, type=BODYWEIGHT)

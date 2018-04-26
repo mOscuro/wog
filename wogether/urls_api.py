@@ -5,7 +5,7 @@ from rest_framework_nested import routers
 from wog_user.views import UserAccountViewSet
 from wog_workout.views import (WorkoutViewSet,
                                SessionInWorkoutViewSet, WorkoutSessionViewSet,
-                               WorkoutProgressionViewSet)
+                               WorkoutProgressionViewSet, WorkoutSessionLeaderboardView)
 from wog_exercise.views import ExerciseViewSet, EquipmentViewSet
 from wog_round.views import RoundInWorkoutViewSet, StepInWorkoutViewSet
 from rest_framework_swagger.views import get_swagger_view
@@ -25,6 +25,7 @@ workouts_router.register(r'sessions', SessionInWorkoutViewSet, base_name='workou
 router.register(r'sessions', WorkoutSessionViewSet)
 sessions_router = routers.NestedSimpleRouter(router, r'sessions', lookup='session')
 sessions_router.register(r'progressions', WorkoutProgressionViewSet, base_name='session-progressions')
+sessions_router.register(r'leaderboard', WorkoutSessionLeaderboardView, base_name='session-leaderboard')
 
 urlpatterns = [
     url(r'^', include(router.urls)),
@@ -32,4 +33,5 @@ urlpatterns = [
     url(r'^', include(sessions_router.urls)),
     # url(r'^obtain-auth-token/$', obtain_auth_token),
     url(r'^docs/$', get_swagger_view(title='Wogether API')),
+    url(r'^auth/', include('knox.urls')),
 ]
