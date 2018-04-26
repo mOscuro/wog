@@ -33,4 +33,5 @@ urlpatterns = [
     url(r'^', include(sessions_router.urls)),
     # url(r'^obtain-auth-token/$', obtain_auth_token),
     url(r'^docs/$', get_swagger_view(title='Wogether API')),
+    url(r'^auth/', include('knox.urls')),
 ]

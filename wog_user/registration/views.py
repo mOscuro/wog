@@ -35,6 +35,8 @@ class RegisterView(CreateAPIView):
         user = serializer.save(self.request)
         token = AuthToken.objects.create(user)
         data = {}
+        print('=====================')
+        print(allauth_settings.EMAIL_VERIFICATION)
         complete_signup(self.request._request, user,
                         allauth_settings.EMAIL_VERIFICATION,
                         None)
