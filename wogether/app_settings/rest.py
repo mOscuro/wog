@@ -9,5 +9,12 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'knox.auth.TokenAuthentication',
     ),
+    'DEFAULT_RENDERER_CLASSES': (
+        # We want our parameters to follow camel-case convention
+        'djangorestframework_camel_case.render.CamelCaseJSONRenderer',
+    ),
+    'DEFAULT_PARSER_CLASSES': (
+        'djangorestframework_camel_case.parser.CamelCaseJSONParser',
+    ),
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
